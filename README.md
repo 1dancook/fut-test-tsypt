@@ -57,6 +57,7 @@ Question[Some multiple choice question text
 - [x] convenience function for blanks --> `#blank()`
 - [x] formatting: box wrap with stroke --> `#boxwrap()`
 - [x] convenience function for multiple choice (one or multiple possible solutions, several possible detractors). All shuffled and displayed as options --> `MultpleChoice`
+- [ ] for `blank`, add the ability to provide a solution that will be highlighted
 - [ ] options: add a limit to QuestionSet (i.e. so there could be many questions but they are limited)
 - [ ] cli/compiling: default seed as year/term determined by creation date
 - [ ] formatting: box wrap with fill
