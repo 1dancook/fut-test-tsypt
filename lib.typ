@@ -18,7 +18,6 @@
 
 // SET UP FOR THE QUESTION COUNTER
 #let question_counter = counter("question_counter")
-#question_counter.step()
 
 
 // FOLLOWING ARE FUNCTIONS
@@ -185,5 +184,9 @@
 
   [= #course #h(3em) Test #test_number #h(3em) (#test_coverage) ]
 
+  // The question counter should be initially stepped here
+  question_counter.step()
+
+  // Include the body of the test from the user document
   body
 }
