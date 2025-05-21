@@ -56,12 +56,14 @@ Question[Some multiple choice question text
 - [x] convenience function for just having a --> `#Q`
 - [x] convenience function for blanks --> `#blank()`
 - [x] formatting: box wrap with stroke --> `#boxwrap()`
+- [ ] options: add a limit to QuestionSet (i.e. so there could be many questions but they are limited)
 - [ ] cli/compiling: default seed as year/term determined by creation date
 - [ ] formatting: box wrap with fill
 - [ ] marking answers / highlighting --> use sys.input to indicate what type of test
   - [ ] test = (default)
   - [ ] answer sheet = `answers`
   - [ ] study notes = `notes`
+- [ ] something based on `Question` but an array of similar questions in which only one is used when compiled (if the similar questions were used in a `QuestionSet` there is potential for a basic duplicate)
 - [ ] convenience function for #True (true/false)
 - [ ] convenience function for #False (true/false)
 - [ ] convenience function for multiple choice (one answer, several wrong answers). The first answer will be the correct one, marked as such, and all of them shuffled
