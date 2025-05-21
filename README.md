@@ -56,6 +56,7 @@ Question[Some multiple choice question text
 - [x] convenience function for just having a --> `#Q`
 - [x] convenience function for blanks --> `#blank()`
 - [x] formatting: box wrap with stroke --> `#boxwrap()`
+- [x] convenience function for multiple choice (one or multiple possible solutions, several possible detractors). All shuffled and displayed as options --> `MultpleChoice`
 - [ ] options: add a limit to QuestionSet (i.e. so there could be many questions but they are limited)
 - [ ] cli/compiling: default seed as year/term determined by creation date
 - [ ] formatting: box wrap with fill
@@ -66,7 +67,6 @@ Question[Some multiple choice question text
 - [ ] something based on `Question` but an array of similar questions in which only one is used when compiled (if the similar questions were used in a `QuestionSet` there is potential for a basic duplicate)
 - [ ] convenience function for #True (true/false)
 - [ ] convenience function for #False (true/false)
-- [ ] convenience function for multiple choice (one answer, several wrong answers). The first answer will be the correct one, marked as such, and all of them shuffled
 - [ ] convenience function for making matching lists (i.e. key value pairs that get shuffled). Currently I'm not sure how the answers would work out for this but there is a way.
 - [ ] convenience function for shuffling words/phrases in a sentence. I.e. input=`this | is | the | input` will be split on `|` and shuffled, displayed with `/` separated values. Answer sheet will show the original.
 - [ ] Convenience function for cloze passages. I.e. mark the targets with `{}` and the targets will be put in a list. Optional extra words for detractors.
