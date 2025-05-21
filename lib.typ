@@ -5,10 +5,14 @@
 // This has to do with difficulty getting the rng working in context (and taking seed from template input)
 // It seems as though using `context` would fix this, but it doesn't work.
 // A minimal example to reproduce and work around the issue might be better, but at the moment the sys.inputs allows for scripting the generation of tests based on year and term and this is sufficient
-#let year = sys.inputs.at("year", default: "0000")
-#let term = sys.inputs.at("term", default: "1")
-
-#let seed = int(str(year) + "0" + str(term))
+//
+// The default values here are to use the current year and term
+// Any custom/manual seed should be done in the command line
+#let _year = datetime.today().year()
+#let _month = datetime.today().month()
+#let _term = if _month >= 4 and _month <= 8 { 1 } else { 2 }
+#let _default_seed = str(_year) + "0" + str(_term) // string
+#let seed = int(sys.inputs.at("seed", default: _default_seed))
 #let rng = gen-rng-f(seed)
 
 
@@ -21,16 +25,16 @@
 
 #let boxwrap(contents) = [
   #box(stroke: 1pt + rgb("#777"), radius: 3pt, inset: 1em)[
-  #contents
+    #contents
   ]
-  ]
+]
 
 // TODO: make a filled box
 
 
 #let _qnum_box(qnum) = box(fill: rgb("#666"), radius: 2pt, outset: 3pt)[ #text(fill: white, weight: "bold")[#qnum]]
 
-#let Q = context{
+#let Q = context {
   question_counter.step()
   h(0.5em)
   _qnum_box(question_counter.display())
@@ -38,18 +42,19 @@
 }
 
 
-#let Question(question_content) = context{
+#let Question(question_content) = context {
   question_counter.step()
   let numberbox = _qnum_box(question_counter.display())
   set par(hanging-indent: measure(numberbox).width + 1em + 3pt)
   block(
     breakable: false,
     [
-  #h(0.5em)
-  #numberbox
-  #h(0.5em)
-  #question_content
-])
+      #h(0.5em)
+      #numberbox
+      #h(0.5em)
+      #question_content
+    ],
+  )
 }
 
 // ------------------------------
@@ -63,46 +68,48 @@
     arguments.width = args.pos().first()
   }
   #box(stroke: (bottom: 1pt + black), ..arguments)
-  ]
+]
 
 
 
-#let options(items, columns: 3, style: "A", randomize: false, left_pad: 0em, right_pad: 0em, expand: false) =  {
-
- 
+#let options(items, columns: 3, style: "A", randomize: false, left_pad: 0em, right_pad: 0em, expand: false) = {
   // shuffle the items if required
   if randomize {
     (_, items) = shuffle(rng, items)
   }
 
-  
+
   // Enumerate items with lettering and encapsulate the lettering with a circle
-  let numbered = items.enumerate().map(((i, item)) => {
-    box(
-      baseline: 1.5pt,
-    circle( radius: 5pt, fill: none, stroke: 1pt + black, inset: 0pt, )[
-    #set align(center + horizon)
-    #text(size: 8pt, numbering(style, i + 1))
-  ])
-  h(4pt)
-  item
-  })
+  let numbered = items
+    .enumerate()
+    .map(((i, item)) => {
+      box(
+        baseline: 1.5pt,
+        circle(radius: 5pt, fill: none, stroke: 1pt + black, inset: 0pt)[
+          #set align(center + horizon)
+          #text(size: 8pt, numbering(style, i + 1))
+        ],
+      )
+      h(4pt)
+      item
+    })
 
   // deal with columns - create an array that is filled with 1fr based on the number of columns
   if expand {
     columns = (1fr,) * columns
   }
 
-  
+
   // Create grid with specified number of columns
-  block(inset: (left: left_pad, right: right_pad), 
-  grid(
-    columns: columns,
-    column-gutter: 2.5em,
-    row-gutter: 0.8em,
-    ..numbered
+  block(
+    inset: (left: left_pad, right: right_pad),
+    grid(
+      columns: columns,
+      column-gutter: 2.5em,
+      row-gutter: 0.8em,
+      ..numbered
+    ),
   )
-)
 }
 
 
@@ -112,7 +119,7 @@
     (_, q_set) = shuffle(rng, q_set)
   }
   q_set.join()
-  }
+}
 
 
 
@@ -125,50 +132,58 @@
   course: "Course Name",
   test_number: "1",
   test_coverage: "Units 1-99",
-  year: "0",
-  term: "0",
-  body
+  body,
 ) = {
+  // PAGE SETUP
+  set text(
+    font: ("Helvetica", "Noto Sans Mono CJK JP", "Helvetica Neue"),
+    weight: "regular",
+    size: 10pt,
+  )
 
-// PAGE SETUP
-set text(
-  font: ("Helvetica", "Noto Sans Mono CJK JP", "Helvetica Neue"),
-  weight: "regular",
-  size: 10pt
-)
 
+  set page(
+    paper: "a4",
+    margin: (x: 1.6cm, y: 1.5cm),
+    // show the page number and the seed number
+    footer: context [#h(1fr) #counter(page).display("1/1", both: true) #h(1em) #seed #h(1fr)],
+  )
 
-set page(
-  paper: "a4",
-  margin: (x: 1.6cm, y: 1.5cm),
-  // show the page number and the seed number
-  footer: context[#h(1fr) #counter(page).display("1/1", both: true) #h(1em) #seed #h(1fr)]
-)
+  set par(
+    justify: true,
+    leading: 0.8em,
+  )
 
-set par(
-  justify: true,
-  leading: 0.8em,
-)
+  // -----------------------
 
-// -----------------------
+  show heading.where(level: 2): element => box(
+    stroke: (left: 5pt + rgb("#888")),
+    outset: 0pt,
+    fill: rgb("#eee"),
+    width: 1fr,
+    inset: 10pt,
+  )[#element]
 
-show heading.where(level: 2): element => box(stroke: (left: 5pt + rgb("#888")), outset: 0pt, fill: rgb("#eee"), width: 1fr, inset: 10pt)[#element]
+  show heading.where(level: 1): element => align(center)[#v(0.5em) #element #v(0.5em)]
 
-show heading.where(level: 1): element => align(center)[#v(0.5em) #element #v(0.5em)]
+  let numbox = box(stroke: 1pt, height: 1.3em, width: 1.3em, baseline: 0.3em)
 
-let numbox = box(stroke: 1pt, height: 1.3em, width: 1.3em, baseline: 0.3em)
+  let student_number_box = box(
+    grid(
+      columns: 8,
+      gutter: 0pt,
+      numbox, numbox, numbox, numbox, numbox, numbox, numbox, numbox,
+    ),
+    baseline: 0.2em,
+  )
 
-let student_number_box = box(grid(columns:8, gutter: 0pt,
-numbox, numbox, numbox, numbox, numbox, numbox, numbox, numbox,
-), baseline: 0.2em)
+  grid(
+    columns: (0.7fr, 1.3fr),
+    gutter: 1em,
+    box[学績番号: #student_number_box], box[氏名: #blank(1fr)],
+  )
 
-grid(columns: (0.7fr, 1.3fr), gutter: 1em,
-  box[学績番号: #student_number_box],
-  box[氏名: #blank(1fr)],
-)
+  [= #course #h(3em) Test #test_number #h(3em) (#test_coverage) ]
 
-[= #course #h(3em) Test #test_number #h(3em)  (#test_coverage) ]
-
-body
-
+  body
 }
