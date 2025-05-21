@@ -19,6 +19,14 @@
 // SET UP FOR THE QUESTION COUNTER
 #let question_counter = counter("question_counter")
 
+// Set up for highlighting solutions
+// TODO: change this to be a parameter set in the command line input
+// i.e. --input solutions:true
+#let hl = true
+
+#let hl_solution = box.with(stroke: 2pt + red.lighten(40%), outset: 0.3em, fill: red.lighten(70%))
+
+
 
 // FOLLOWING ARE FUNCTIONS
 
@@ -120,7 +128,70 @@
   q_set.join()
 }
 
+#let MultipleChoice(
+  solution_items,
+  detractor_items,
+  solutions: none,
+  detractors: none,
+  left_pad: 0em,
+  vertical: false,
+) = {
+  // Multiple Choice options require solutions and detractors.
+  // Solutions can be provided as a single item not in an array
+  // A single item is the most likely use case
+  // Multiple solutions can be provided, and a limit set on how many are used.
+  // In this way this function can be used to construct many types of multiple choice: single solution, or multiple solution option sets.
+  // Detractor items must be in an array.
 
+  // The case when a single solution is provided.
+  // convert it to an array for later
+  if type(solution_items) != array {
+    solution_items = (solution_items,)
+  } else if type(solution_items) == array {
+    // there could be one or more solution_items, provided in an array
+    // use all the solutions if no limit is specified (none)
+    if solutions == none { solutions = solution_items.len() }
+
+    // the limit will be applied and solutions randomly chosen
+    if solution_items.len() > 1 and solutions <= solution_items.len() {
+      // replacement is necessary here to prevent duplicates
+      (_, solution_items) = choice(rng, solution_items, size: solutions, replacement: false)
+    }
+  }
+
+  // handle any solution items being an integer -- convert to string
+  for (index, item) in solution_items.enumerate() {
+    if type(item) == int {
+      solution_items.at(index) = str(solution_items.at(index))
+    }
+  }
+
+
+  // handle any detractor items being an integer -- convert to string
+  for (index, item) in detractor_items.enumerate() {
+    if type(item) == int {
+      detractor_items.at(index) = str(detractor_items.at(index))
+    }
+  }
+
+  // highlight all solution_items
+  let solution_items = solution_items.map(it => if hl { hl_solution(it) } else { it })
+
+
+  // It is assumed that the provided detractor_items are all needed
+  // unless a limit is set with `detractors`
+  if detractors != none and detractors >= 1 and detractors <= detractor_items.len() {
+    // randomly choose detractor_items to use
+    // replacement is necessary here to prevent duplicates
+    (_, detractor_items) = choice(rng, detractor_items, size: detractors, replacement: false)
+  }
+
+  let option_items = solution_items + detractor_items
+
+  // render as option items
+  let columns = if vertical { 1 } else { option_items.len() }
+  options(option_items, columns: columns, expand: true, left_pad: left_pad, randomize: true)
+}
 
 
 // FOLLOWING IS FOR THE PAGE TEMPLATE
@@ -165,7 +236,7 @@
 
   show heading.where(level: 1): element => align(center)[#v(0.5em) #element #v(0.5em)]
 
-  let numbox = box(stroke: 1pt, height: 1.3em, width: 1.3em, baseline: 0.3em)
+  let numbox = box(stroke: 1pt, height: 1.3em, width: 1.3em)
 
   let student_number_box = box(
     grid(
@@ -173,13 +244,13 @@
       gutter: 0pt,
       numbox, numbox, numbox, numbox, numbox, numbox, numbox, numbox,
     ),
-    baseline: 0.2em,
+    baseline: 0.3em,
   )
 
   grid(
     columns: (0.7fr, 1.3fr),
     gutter: 1em,
-    box[学績番号: #student_number_box], box[氏名: #blank(1fr)],
+    box(baseline: 0em, [学績番号: #student_number_box]), box(baseline: 1em, [氏名: #blank(1fr)]),
   )
 
   [= #course #h(3em) Test #test_number #h(3em) (#test_coverage) ]
