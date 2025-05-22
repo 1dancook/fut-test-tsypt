@@ -22,7 +22,7 @@
 // Set up for highlighting solutions
 // TODO: change this to be a parameter set in the command line input
 // i.e. --input solutions:true
-#let hl = true
+#let hl = false
 
 #let hl_solution = box.with(stroke: 2pt + red.lighten(40%), outset: 0.3em, fill: red.lighten(70%))
 
@@ -39,7 +39,12 @@
 // TODO: make a filled box
 
 
-#let _qnum_box(qnum) = box(fill: rgb("#666"), radius: 2pt, outset: 3pt)[ #text(fill: white, weight: "bold")[#qnum]]
+#let _qnum_box(qnum) = box(fill: rgb("#666"), height: 1.2em, radius: 2pt, outset: (x: 3pt), baseline: 0.25em)[
+  #set align(center + horizon)
+  #text(
+    fill: white,
+    weight: "bold",
+  )[#qnum]]
 
 #let Q = context {
   question_counter.step()
@@ -190,6 +195,34 @@
   let columns = if vertical { 1 } else { option_items.len() }
   options(option_items, columns: columns, expand: true, left_pad: left_pad, randomize: true)
 }
+
+
+
+#let Order(number, target_text) = [
+  #h(1em)
+  #if hl [
+    #box(
+      height: 1.2em,
+      width: 1.2em,
+      fill: red.lighten(70%),
+      stroke: 1pt,
+      baseline: 0.25em,
+      [#set align(center + horizon); #number],
+    )
+  ] else [
+    #box(height: 1.2em, width: 1.2em, stroke: 1pt, baseline: 0.25em)
+  ]
+  #h(1em)
+  #target_text
+]
+
+
+
+
+
+
+
+
 
 
 // FOLLOWING IS FOR THE PAGE TEMPLATE
