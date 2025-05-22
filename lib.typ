@@ -54,7 +54,7 @@
 }
 
 
-#let Question(question_content, breakable: false, below: 0.5em) = context {
+#let Question(question_content, breakable: false, below: 0.8em) = context {
   question_counter.step()
   let numberbox = _qnum_box(question_counter.display())
   set par(hanging-indent: measure(numberbox).width + 1em + 3pt)
@@ -82,7 +82,17 @@
 
 
 
-#let options(items, columns: 3, style: "A", randomize: false, left_pad: 0em, right_pad: 0em, expand: false) = {
+#let options(
+  items,
+  columns: 3,
+  style: "A",
+  randomize: false,
+  left_pad: 0em,
+  right_pad: 0em,
+  expand: false,
+  above: 0.5em,
+  below: 0.5em,
+) = {
   // shuffle the items if required
   if randomize {
     (_, items) = shuffle(rng, items)
@@ -113,6 +123,8 @@
   // Create grid with specified number of columns
   block(
     inset: (left: left_pad, right: right_pad),
+    above: above,
+    below: below,
     grid(
       columns: columns,
       column-gutter: 2.5em,
