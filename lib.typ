@@ -24,7 +24,11 @@
 // i.e. --input solutions:true
 #let hl = false
 
-#let hl_solution = box.with(stroke: 2pt + red.lighten(40%), outset: 0.3em, fill: red.lighten(70%))
+#let hl_solution(solution) = if hl {
+  box(stroke: 2pt + red.lighten(40%), outset: 0.3em, fill: red.lighten(70%), solution)
+} else {
+  solution
+}
 
 
 
