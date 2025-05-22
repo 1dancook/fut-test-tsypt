@@ -229,10 +229,8 @@
 ]
 
 
-
-
-
-
+#let True = options((hl_solution("True"), "False"), left_pad: 2.5em)
+#let False = options(("True", hl_solution("False")), left_pad: 2.5em)
 
 
 
