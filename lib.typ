@@ -49,17 +49,15 @@
 }
 
 
-#let Question(question_content) = context {
+#let Question(question_content, breakable: false, below: 0.5em) = context {
   question_counter.step()
   let numberbox = _qnum_box(question_counter.display())
   set par(hanging-indent: measure(numberbox).width + 1em + 3pt)
   block(
-    breakable: false,
+    breakable: breakable,
+    below: below,
     [
-      #h(0.5em)
-      #numberbox
-      #h(0.5em)
-      #question_content
+      #h(0.5em) #numberbox #h(0.5em) #question_content
     ],
   )
 }
