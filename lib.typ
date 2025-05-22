@@ -39,12 +39,16 @@
 // TODO: make a filled box
 
 
-#let _qnum_box(qnum) = box(fill: rgb("#666"), height: 1.2em, radius: 2pt, outset: (x: 3pt), baseline: 0.25em)[
-  #set align(center + horizon)
-  #text(
-    fill: white,
-    weight: "bold",
-  )[#qnum]]
+#let _qnum_box(qnum) = box(
+  width: 1.5em,
+  baseline: 0.25em,
+  box(fill: rgb("#666"), height: 1.2em, radius: 2pt, outset: (x: 3pt), baseline: 0.25em)[
+    #set align(center + horizon)
+    #text(
+      fill: white,
+      weight: "bold",
+    )[#qnum]],
+)
 
 #let Q = context {
   question_counter.step()
