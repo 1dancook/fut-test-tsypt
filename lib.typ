@@ -13,8 +13,7 @@
 #let _term = if _month >= 4 and _month <= 8 { 1 } else { 2 }
 #let _default_seed = str(_year) + "0" + str(_term) // string
 #let seed = int(sys.inputs.at("seed", default: _default_seed))
-#let rng = gen-rng-f(seed)
-
+#let rng = state("rng", (gen-rng(seed), none))
 
 // SET UP FOR THE QUESTION COUNTER
 #let question_counter = counter("question_counter")
