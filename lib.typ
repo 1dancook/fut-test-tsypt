@@ -144,11 +144,28 @@
 
 
 
-#let QuestionSet(q_set, randomize: true) = {
-  if randomize {
-    (_, q_set) = shuffle(rng, q_set)
+#let QuestionSet(q_set, limit: none, randomize: true) = {
+  if limit == none {
+    // FIX: handle other values (negative int, etc)
+    limit = q_set.len()
+  } else {
+    randomize = true // limit will be applied by random choice so randomization must be on
   }
-  q_set.join()
+
+  /* NOTE: there is a severe limitation from typst resulting in nested randomization being not possible and/or extremely fragile. Currently doing true randomization here that requires context will result in an error (show rule depth exceeded). Thus, currently this is a hack workaround - because using the other randomization method (that relies on context), the nested context will result in a convergence issue and the document will not compile. this work around uses a local_rng based on the same seed. some issues with this could be similar order across question sets (especially when the number of question items is similar), however, since this has to do with question order it may not be quite noticeable, and it is still a shuffle regardless.
+   */
+  let randomize_question_set(q_set, limit) = {
+    let local_rng = gen-rng(seed)
+    let (_, shuffled) = choice(local_rng, q_set, size: limit, replacement: false)
+    shuffled.join()
+  }
+
+  if randomize {
+    //randomize_question_set(q_set, shuffled => shuffled.join())
+    randomize_question_set(q_set, limit)
+  } else {
+    q_set.join()
+  }
 }
 
 #let MultipleChoice(
