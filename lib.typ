@@ -21,7 +21,7 @@
 // Set up for highlighting solutions
 // TODO: change this to be a parameter set in the command line input
 // i.e. --input solutions:true
-#let hl = false
+#let hl = true
 
 #let hl_solution(solution) = if hl {
   box(stroke: 2pt + red.lighten(40%), outset: 0.3em, fill: red.lighten(70%), solution)
@@ -101,27 +101,19 @@
   items,
   columns: 3,
   style: "A",
-  randomize: false,
   left_pad: 0em,
   right_pad: 0em,
   expand: false,
   above: 0.5em,
   below: 0.5em,
 ) = {
-  // shuffle the items if required
-  if randomize {
-    (_, items) = shuffle(rng, items)
-  }
-
+  // FIX: this function should take some randomization but it may be better to use this as a backend function
+  // and introduce an API in a different function
 
   // Enumerate items with lettering and encapsulate the lettering with a circle
   let numbered = items
     .enumerate()
     .map(((i, item)) => {
-      box(
-        baseline: 1.5pt,
-        circle(radius: 5pt, fill: none, stroke: 1pt + black, inset: 0pt)[
-          #set align(center + horizon)
       round_numbering(numbering(style, i + 1))
       h(4pt)
       item
