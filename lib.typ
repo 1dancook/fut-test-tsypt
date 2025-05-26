@@ -262,6 +262,97 @@
 
 
 
+#let Match(pairs, detractors: none, style: "A", col_size: (1fr, 1fr)) = {
+  let process_string(it) = {
+    // a function to process the key/value strings
+    // substitution of #blank for a blank line
+    // any typst markup will work
+    let blank_line = box(width: 2.5em, height: 1em, stroke: (bottom: 1pt))
+    return eval(it, mode: "markup", scope: (blank: blank_line))
+  }
+
+  // first, give the left side and right side an identical index and make two arrays
+  let (left_side, right_side) = (
+    pairs.keys().enumerate().map(((i, item)) => (i, process_string(item))),
+    pairs.values().enumerate().map(((i, item)) => (i, process_string(item))),
+  )
+
+
+  // Next, add any detractors on the right side
+  // the index and value will be the same here as the index doesn't matter
+  // for detractors
+  if detractors != none {
+    if type(detractors) == str {
+      right_side.push((detractors, detractors))
+    } else if type(detractors) == array {
+      for item in detractors {
+        right_side.push((item, item))
+      }
+    }
+  }
+
+
+  // Next, send the left and right side to be randomized and continue from there
+  let randomize_left_right(left, right, callback) = {
+    // returns an array of (left, right)
+    rng.update(((rng, _)) => shuffle(rng, left))
+    rng.update(((rng, shuffled_left)) => {
+      let (newrng, shuffled_right) = shuffle(rng, right)
+      (rng, (shuffled_left, shuffled_right))
+    })
+    context callback(rng.get().last())
+  }
+
+
+  randomize_left_right(
+    left_side,
+    right_side,
+    shuffled => {
+      let (left_side, right_side) = shuffled
+
+      // The following adds a typst numbering type to the left and right side items
+      // depending on their order (after being randomized)
+      // This numbering is then used in compilation for both sides, but for the left side
+      // when answer highlighting is turned on
+
+      // add numbering to the right side first
+      let numbered_right = right_side.enumerate().map(((i, (index, item))) => (index, item, numbering(style, i + 1)))
+
+      // iterate over left side, matching with right side (based on index)
+      // create a new array for the left that contains numbering
+      let numbered_left = ()
+      for (index_left, key) in left_side {
+        for (index_right, value, num) in numbered_right {
+          if index_left == index_right {
+            numbered_left.push((index_left, key, num))
+          }
+        }
+      }
+
+      // finally, display
+
+      grid(
+        columns: col_size,
+        column-gutter: 4em,
+        align: horizon,
+
+        [
+          #for (index, key, num) in numbered_left [
+            #Question[ #Order(num, key) ] // #Order has the layout that I would like
+          ]
+        ],
+        boxwrap([
+          #for (index, value, num) in numbered_right [
+            #round_numbering(num) #h(4pt) #value #linebreak()
+          ]
+        ]),
+      )
+    },
+  )
+}
+
+
+
 
 // FOLLOWING IS FOR THE PAGE TEMPLATE
 
