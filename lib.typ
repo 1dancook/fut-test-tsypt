@@ -88,7 +88,15 @@
   #box(stroke: (bottom: 1pt + black), ..arguments)
 ]
 
-
+#let round_numbering(num) = {
+  box(
+    baseline: 1.5pt,
+    circle(radius: 5pt, fill: none, stroke: 1pt + black, inset: 0pt)[
+      #set align(center + horizon)
+      #text(size: 8pt, num)
+    ],
+  )
+}
 
 #let options(
   items,
@@ -115,9 +123,7 @@
         baseline: 1.5pt,
         circle(radius: 5pt, fill: none, stroke: 1pt + black, inset: 0pt)[
           #set align(center + horizon)
-          #text(size: 8pt, numbering(style, i + 1))
-        ],
-      )
+      round_numbering(numbering(style, i + 1))
       h(4pt)
       item
     })
