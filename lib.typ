@@ -168,6 +168,8 @@
   }
 }
 
+
+
 #let MultipleChoice(
   solution_items,
   detractor_items,
@@ -175,28 +177,27 @@
   detractors: none,
   left_pad: 0em,
   vertical: false,
+  columns: none,
 ) = {
-  // Multiple Choice options require solutions and detractors.
-  // Solutions can be provided as a single item not in an array
-  // A single item is the most likely use case
-  // Multiple solutions can be provided, and a limit set on how many are used.
-  // In this way this function can be used to construct many types of multiple choice: single solution, or multiple solution option sets.
-  // Detractor items must be in an array.
+  let combined_shuffle(solution_items, detractor_items, solutions, detractors, callback) = {
+    // first, do random choice and store A
+    rng.update(((rng, _)) => choice(rng, solution_items, size: solutions, replacement: false))
+    // second, do choice from B and store A+B
+    rng.update(((rng, shuffled_solutions)) => {
+      let (new_rng, shuffled_detractors) = choice(rng, detractor_items, size: detractors, replacement: false)
+      (new_rng, shuffled_solutions + shuffled_detractors)
+    })
+    // third, do shuffle of A+B (combined options)
+    rng.update(((rng, combined_options)) => shuffle(rng, combined_options))
+
+    context callback(rng.get().last())
+  }
+
 
   // The case when a single solution is provided.
   // convert it to an array for later
   if type(solution_items) != array {
     solution_items = (solution_items,)
-  } else if type(solution_items) == array {
-    // there could be one or more solution_items, provided in an array
-    // use all the solutions if no limit is specified (none)
-    if solutions == none { solutions = solution_items.len() }
-
-    // the limit will be applied and solutions randomly chosen
-    if solution_items.len() > 1 and solutions <= solution_items.len() {
-      // replacement is necessary here to prevent duplicates
-      (_, solution_items) = choice(rng, solution_items, size: solutions, replacement: false)
-    }
   }
 
   // handle any solution items being an integer -- convert to string
@@ -206,7 +207,6 @@
     }
   }
 
-
   // handle any detractor items being an integer -- convert to string
   for (index, item) in detractor_items.enumerate() {
     if type(item) == int {
@@ -215,23 +215,26 @@
   }
 
   // highlight all solution_items
-  let solution_items = solution_items.map(it => if hl { hl_solution(it) } else { it })
+  solution_items = solution_items.map(it => if hl { hl_solution(it) } else { it })
 
+  if solutions == none { solutions = solution_items.len() }
+  if detractors == none { detractors = detractor_items.len() }
 
-  // It is assumed that the provided detractor_items are all needed
-  // unless a limit is set with `detractors`
-  if detractors != none and detractors >= 1 and detractors <= detractor_items.len() {
-    // randomly choose detractor_items to use
-    // replacement is necessary here to prevent duplicates
-    (_, detractor_items) = choice(rng, detractor_items, size: detractors, replacement: false)
-  }
-
-  let option_items = solution_items + detractor_items
-
-  // render as option items
-  let columns = if vertical { 1 } else { option_items.len() }
-  options(option_items, columns: columns, expand: true, left_pad: left_pad, randomize: true)
+  // set the number of columns to use
+  columns = if vertical { 1 } else if columns != none { columns } else { solutions + detractors }
+  // send to nested function to shuffle, display the results from the callback
+  combined_shuffle(
+    solution_items,
+    detractor_items,
+    solutions,
+    detractors,
+    shuffled => [
+      #options(shuffled, columns: columns, expand: true, left_pad: left_pad)
+    ],
+  )
 }
+
+
 
 
 
