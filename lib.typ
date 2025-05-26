@@ -236,9 +236,10 @@
 
 
 #let Order(number, target_text) = {
-  box(baseline: 0.3em)[#grid(
+  box(baseline: 0.25em)[#grid(
       columns: (auto, auto),
-      column-gutter: 1.5em,
+      column-gutter: 1.3em,
+      align: horizon,
       [
         #if hl {
           box(
