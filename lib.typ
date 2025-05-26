@@ -238,23 +238,26 @@
 
 
 
-#let Order(number, target_text) = [
-  #h(1em)
-  #if hl [
-    #box(
-      height: 1.2em,
-      width: 1.2em,
-      fill: red.lighten(70%),
-      stroke: 1pt,
-      baseline: 0.25em,
-      [#set align(center + horizon); #number],
-    )
-  ] else [
-    #box(height: 1.2em, width: 1.2em, stroke: 1pt, baseline: 0.25em)
-  ]
-  #h(1em)
-  #target_text
-]
+#let Order(number, target_text) = {
+  box(baseline: 0.3em)[#grid(
+      columns: (auto, auto),
+      column-gutter: 1.5em,
+      [
+        #if hl {
+          box(
+            height: 1.2em,
+            width: 1.2em,
+            fill: red.lighten(70%),
+            stroke: 1pt,
+            baseline: 0.25em,
+            [#set align(center + horizon); #number],
+          )
+        } else {
+          box(height: 1.2em, width: 1.2em, stroke: 1pt, baseline: 0.25em)
+        }],
+      [#target_text],
+    )]
+}
 
 
 #let True = options((hl_solution("True"), "False"), left_pad: 3em)
