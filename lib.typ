@@ -44,8 +44,7 @@
 
 #let _qnum_box(qnum) = box(
   width: 1.5em,
-  baseline: 0.25em,
-  box(fill: rgb("#666"), height: 1.2em, radius: 2pt, outset: (x: 3pt), baseline: 0.25em)[
+  box(fill: rgb("#666"), height: 1.2em, radius: 2pt, inset: (x: 3pt))[
     #set align(center + horizon)
     #text(
       fill: white,
@@ -67,7 +66,6 @@
 #let Question(question_content, breakable: false, below: 0.8em) = context {
   question_counter.step()
   let numberbox = _qnum_box(question_counter.display())
-  set par(hanging-indent: measure(numberbox).width + 1em + 3pt)
   block(
     breakable: breakable,
     below: below,
@@ -75,7 +73,7 @@
       columns: 2,
       column-gutter: 0.5em,
       align: top,
-      [#h(0.5em) #numberbox], question_content,
+      [#h(0.5em) #numberbox], box(inset: (top: 2pt), question_content),
     ),
   )
 }
@@ -241,8 +239,10 @@
 
 
 
-#let Order(number, target_text) = {
-  box(baseline: 0.25em)[#grid(
+#let Order(number, target_text, top_offset: -2pt) = {
+  box(
+    inset: (top: top_offset), // this is here to deal with the offset from Question
+    grid(
       columns: (auto, auto),
       column-gutter: 1.3em,
       align: horizon,
@@ -253,14 +253,14 @@
             width: 1.2em,
             fill: red.lighten(70%),
             stroke: 1pt,
-            baseline: 0.25em,
             [#set align(center + horizon); #number],
           )
         } else {
-          box(height: 1.2em, width: 1.2em, stroke: 1pt, baseline: 0.25em)
+          box(height: 1.2em, width: 1.2em, stroke: 1pt)
         }],
       [#target_text],
-    )]
+    ),
+  )
 }
 
 
