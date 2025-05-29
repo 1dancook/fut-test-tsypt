@@ -55,9 +55,12 @@
 
 #let Q = context {
   question_counter.step()
-  h(0.5em)
   _qnum_box(question_counter.display())
-  h(0.5em)
+}
+
+#let QuestionNum = context {
+  question_counter.step()
+  question_counter.display()
 }
 
 
