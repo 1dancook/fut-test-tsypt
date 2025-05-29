@@ -19,7 +19,11 @@
 #let question_counter = counter("question_counter")
 
 // Some other stylistic globals
-#let question_fill_color = gray.darken(50%)
+#let question_fill_color = black
+#let dark_color = black
+#let light_gray = gray.lighten(40%)
+#let faint_gray = gray.lighten(50%)
+#let box_inset = 0.8em
 
 // Set up for highlighting solutions
 #let answerkey = {
@@ -33,7 +37,7 @@
 }
 
 #let hl_solution(solution) = if answerkey {
-  box(stroke: 2pt + red.lighten(40%), outset: 0.3em, fill: red.lighten(70%), solution)
+  box(stroke: 2pt + red, outset: 0.3em, fill: red.lighten(70%), solution)
 } else {
   solution
 }
@@ -48,7 +52,7 @@
 }
 
 #let boxwrap(contents) = [
-  #box(stroke: 1pt + rgb("#777"), radius: 3pt, inset: 1em)[
+  #box(stroke: 1pt + dark_color, radius: 3pt, inset: 1em)[
     #contents
   ]
 ]
@@ -102,13 +106,13 @@
   #if args.pos().len() > 0 {
     arguments.width = args.pos().first()
   }
-  #box(stroke: (bottom: 1pt + black), ..arguments)
+  #box(stroke: (bottom: 1pt + dark_color), ..arguments)
 ]
 
 #let round_numbering(num) = {
   box(
     baseline: 1.5pt,
-    circle(radius: 5pt, fill: none, stroke: 1pt + black, inset: 0pt)[
+    circle(radius: 5pt, fill: none, stroke: 1pt + dark_color, inset: 0pt)[
       #set align(center + horizon)
       #text(size: 8pt, num)
     ],
@@ -230,7 +234,7 @@
   }
 
   // highlight all solution_items
-  solution_items = solution_items.map(it => if hl { hl_solution(it) } else { it })
+  solution_items = solution_items.map(it => if answerkey { hl_solution(it) } else { it })
 
   if solutions == none { solutions = solution_items.len() }
   if detractors == none { detractors = detractor_items.len() }
@@ -262,7 +266,7 @@
       align: horizon,
       [
         #h(0.5em) // provide a bit of horizontal space
-        #if hl {
+        #if answerkey {
           box(
             height: 1.2em,
             width: 1.2em,
@@ -289,7 +293,7 @@
     // a function to process the key/value strings
     // substitution of #blank for a blank line
     // any typst markup will work
-    let blank_line = box(width: 2.5em, height: 1em, stroke: (bottom: 1pt))
+    let blank_line = box(width: 2.5em, height: 1em, stroke: (bottom: 1pt + dark_color))
     return eval(it, mode: "markup", scope: (blank: blank_line))
   }
 
@@ -363,11 +367,14 @@
             #Question[ #Order(num, key) ] // #Order has the layout that I would like
           ]
         ],
-        boxwrap([
-          #for (index, value, num) in numbered_right [
-            #round_numbering(num) #h(4pt) #value #linebreak()
-          ]
-        ]),
+
+        box(
+          inset: box_inset,
+          radius: 3pt,
+          stroke: 1pt + light_gray,
+          fill: light_gray,
+          { for (index, value, num) in numbered_right [ #round_numbering(num) #h(4pt) #value #linebreak() ] },
+        ),
       )
     },
   )
@@ -494,7 +501,7 @@
               align(center + horizon, text(fill: white, weight: "bold", size: 0.9em, QuestionNum)),
             )
           }
-          if hl {
+          if answerkey {
             if show_solutions in ("top", "left") {
               // we need the numbering
               solution = align(center + bottom, text(fill: red, num))
@@ -507,10 +514,10 @@
             8 * 11pt
           } else { 2.5em } // encourage writing the Letter in the smaller box
           box(
-            stroke: (bottom: 1pt + gray.darken(50%)),
+            stroke: (bottom: 1pt + dark_color),
             height: 12pt,
             baseline: 2pt,
-            fill: gray.lighten(90%),
+            fill: faint_gray,
             radius: (left: 3pt),
             clip: true,
             [#qnum#box(inset: 3pt, baseline: -0pt, width: box_width, solution)],
@@ -528,18 +535,17 @@
         box([#round_numbering(num) #h(0.3em) #solution])
       })
 
-      let box_inset = 0.8em
       let cloze_content_display = align(
         left,
-        box(inset: box_inset, radius: 3pt, stroke: 1pt + gray.lighten(10%), numbered_chunks.join("")),
+        box(inset: box_inset, radius: 3pt, stroke: 1pt + light_gray, numbered_chunks.join("")),
       )
 
       let solution_joiner = if show_solutions == "top" { h(2.5em) } else { linebreak() }
       let solutions_display = box(
         inset: box_inset,
         radius: 3pt,
-        stroke: 1pt + gray.lighten(40%),
-        fill: gray.lighten(70%),
+        stroke: 1pt + light_gray,
+        fill: light_gray,
         numbered_solutions.join(solution_joiner),
       )
 
@@ -572,9 +578,8 @@
 
 
 #let futtest(
-  course: "Course Name",
-  test_number: "1",
-  test_coverage: "Units 1-99",
+  title: "Title of Test",
+  supplement: "supplement about the test",
   body,
 ) = {
   // PAGE SETUP
@@ -590,6 +595,7 @@
     margin: (x: 1.6cm, y: 1.5cm),
     // show the page number and the seed number
     footer: context [#h(1fr) #counter(page).display("1/1", both: true) #h(1em) #seed #h(1fr)],
+    header: if answerkey [#h(1fr) #box(fill: red, inset: 2pt, text(fill: white, "ANSWER KEY")) #h(1fr) ],
   )
 
   set par(
@@ -600,16 +606,16 @@
   // -----------------------
 
   show heading.where(level: 2): element => box(
-    stroke: (left: 5pt + rgb("#444")),
+    stroke: (left: 5pt + dark_color),
     outset: 0pt,
-    fill: rgb("#eee"),
+    fill: light_gray,
     width: 1fr,
     inset: 10pt,
   )[#element]
 
   show heading.where(level: 1): element => align(center)[#v(0.5em) #element #v(0.5em)]
 
-  let numbox = box(stroke: 1pt, height: 1.3em, width: 1.3em)
+  let numbox = box(stroke: 1pt, height: 1.5em, width: 1.5em, baseline: 2pt)
 
   let student_number_box = box(
     grid(
@@ -623,10 +629,12 @@
   grid(
     columns: (0.7fr, 1.3fr),
     gutter: 1em,
+    align: horizon,
     box(baseline: 0em, [学績番号: #student_number_box]), box(baseline: 1em, [氏名: #blank(1fr)]),
   )
 
-  [= #course #h(3em) Test #test_number #h(3em) (#test_coverage) ]
+  [= #title #h(1em) - #h(1em) #supplement ]
+
 
   // The question counter should be initially stepped here
   question_counter.step()
