@@ -573,6 +573,64 @@
 }
 
 
+
+#let Unscramble(text_input, detractor: none, hint: none, delimiter: "|") = {
+  // trim it
+  text_input = text_input.trim()
+
+  // extract the last character to use for the writing line (only if it is punctuation)
+  let last_char = if text_input.at(-1) in (".", "?") {
+    text_input.at(-1)
+  } else { "" }
+  // then trim it
+  text_input = text_input.trim(last_char)
+
+  // remove delimiter and store the solution (making it red text)
+  let solution = text(fill: red, weight: "bold", text_input.replace(delimiter, ""))
+
+  // lower and trim it
+  text_input = lower(text_input)
+
+  // split by delimiter
+  let chunks = text_input.split(delimiter).map(it => it.trim())
+
+  // add the detractor (only if it is string)
+  if type(detractor) == str { chunks.push(lower(detractor)) }
+
+  let shuffle_chunks(chunks, callback) = {
+    rng.update(((rng, _)) => shuffle(rng, chunks))
+    context callback(rng.get().last())
+  }
+
+  shuffle_chunks(
+    chunks,
+    shuffled => {
+      shuffled = shuffled.map(it => box(inset: 3pt, stroke: 1pt, it))
+
+      let joined_chunks = shuffled.join(h(0.5em))
+
+      let full_line = grid(
+        columns: (1fr, auto),
+        box(height: 12pt, inset: 2pt, stroke: (bottom: 1pt), width: 1fr, if answerkey { solution }),
+        box(height: 12pt, inset: 2pt, [#h(0.1em) *#last_char*]),
+      )
+
+      let display_order = (joined_chunks, full_line)
+
+      if type(hint) == str {
+        display_order = (joined_chunks, text(size: 10pt, [_(Hint: #hint)_]), full_line)
+      }
+
+
+      grid(
+        columns: 1, row-gutter: 0.8em,
+        ..display_order
+      )
+    },
+  )
+}
+
+
 // FOLLOWING IS FOR THE PAGE TEMPLATE
 
 
