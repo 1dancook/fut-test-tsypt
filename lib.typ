@@ -71,9 +71,12 @@
   block(
     breakable: breakable,
     below: below,
-    [
-      #h(0.5em) #numberbox #h(0.5em) #question_content
-    ],
+    grid(
+      columns: 2,
+      column-gutter: 0.5em,
+      align: top,
+      [#h(0.5em) #numberbox], question_content,
+    ),
   )
 }
 
