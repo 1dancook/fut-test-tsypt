@@ -22,11 +22,17 @@
 #let question_fill_color = gray.darken(50%)
 
 // Set up for highlighting solutions
-// TODO: change this to be a parameter set in the command line input
-// i.e. --input solutions:true
-#let hl = true
+#let answerkey = {
+  // i.e. --input answerkey:true
+  // have to deal with strings, and bool does not have a constructor
+  let ak = sys.inputs.at("answerkey", default: false)
+  if type(ak) == str and ak in ("true", "false") {
+    ak = eval(ak)
+  }
+  ak
+}
 
-#let hl_solution(solution) = if hl {
+#let hl_solution(solution) = if answerkey {
   box(stroke: 2pt + red.lighten(40%), outset: 0.3em, fill: red.lighten(70%), solution)
 } else {
   solution
