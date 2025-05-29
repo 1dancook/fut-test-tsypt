@@ -623,7 +623,7 @@
 
 
       grid(
-        columns: 1, row-gutter: 0.8em,
+        columns: 1, row-gutter: 0.5em,
         ..display_order
       )
     },
