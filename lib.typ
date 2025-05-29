@@ -18,6 +18,9 @@
 // SET UP FOR THE QUESTION COUNTER
 #let question_counter = counter("question_counter")
 
+// Some other stylistic globals
+#let question_fill_color = gray.darken(50%)
+
 // Set up for highlighting solutions
 // TODO: change this to be a parameter set in the command line input
 // i.e. --input solutions:true
@@ -35,7 +38,7 @@
 
 
 #let Instructions(instruction_text) = {
-  block(above: 0.5em, text(weight: "regular", size: 10pt, instruction_text))
+  block(above: 0.7em, text(weight: "regular", size: 10pt, instruction_text))
 }
 
 #let boxwrap(contents) = [
@@ -49,7 +52,7 @@
 
 #let _qnum_box(qnum) = box(
   width: 1.5em,
-  box(fill: rgb("#666"), height: 1.2em, radius: 2pt, inset: (x: 3pt))[
+  box(fill: question_fill_color, height: 1.2em, radius: 2pt, inset: (x: 3pt))[
     #set align(center + horizon)
     #text(
       fill: white,
@@ -252,6 +255,7 @@
       column-gutter: 1.3em,
       align: horizon,
       [
+        #h(0.5em) // provide a bit of horizontal space
         #if hl {
           box(
             height: 1.2em,
@@ -479,12 +483,9 @@
           let (index, chunk_text, num) = it
           if show_question_numbers {
             qnum = box(
-              fill: gray.darken(50%),
-              //height: 1.1em,
-              radius: (top-left: 3pt),
+              fill: question_fill_color,
               inset: 3pt,
-              baseline: 0pt,
-              align(center + horizon, text(fill: white, size: 0.9em, QuestionNum)),
+              align(center + horizon, text(fill: white, weight: "bold", size: 0.9em, QuestionNum)),
             )
           }
           if hl {
@@ -504,7 +505,7 @@
             height: 12pt,
             baseline: 2pt,
             fill: gray.lighten(90%),
-            radius: (top: 3pt),
+            radius: (left: 3pt),
             clip: true,
             [#qnum#box(inset: 3pt, baseline: -0pt, width: box_width, solution)],
           )
@@ -593,7 +594,7 @@
   // -----------------------
 
   show heading.where(level: 2): element => box(
-    stroke: (left: 5pt + rgb("#888")),
+    stroke: (left: 5pt + rgb("#444")),
     outset: 0pt,
     fill: rgb("#eee"),
     width: 1fr,
