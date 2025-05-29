@@ -414,8 +414,8 @@
     // get normal text
     chunked.push(cloze_content.slice(last_pos, item.start))
 
-    // get the item text
-    chunked.push((i, item.text.trim("{").trim("}")))
+    // get the item text, trim and lower it
+    chunked.push((i, lower(item.text.trim("{").trim("}"))))
 
     // store the end position for next iteration
     last_pos = item.end
