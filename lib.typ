@@ -21,8 +21,8 @@
 // Some other stylistic globals
 #let question_fill_color = black
 #let dark_color = black
-#let light_gray = gray.lighten(40%)
-#let faint_gray = gray.lighten(50%)
+#let light_gray = gray.lighten(50%)
+#let faint_gray = gray.lighten(60%)
 #let box_inset = 0.8em
 
 // Set up for highlighting solutions
