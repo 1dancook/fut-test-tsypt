@@ -22,7 +22,7 @@ Some examples of how to use `MultipleChoice`
     ```typst
     #let formatted_text = [There was a *bold* thing.]
     ```
-    #let formatted_text = [There was a *bold* thing.]
+    #let formatted_text = [*bold* thing.]
 
     #MultipleChoice(formatted_text, ("D", "E", "G", 56), vertical: true)
   ]
