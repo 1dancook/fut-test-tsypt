@@ -33,6 +33,11 @@
 
 // FOLLOWING ARE FUNCTIONS
 
+
+#let Instructions(instruction_text) = {
+  block(above: 0.5em, text(weight: "regular", size: 10pt, instruction_text))
+}
+
 #let boxwrap(contents) = [
   #box(stroke: 1pt + rgb("#777"), radius: 3pt, inset: 1em)[
     #contents
