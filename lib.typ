@@ -354,6 +354,200 @@
 
 
 
+#let Cloze(
+  cloze_content, // a string
+  detractor_list: none, // str, int, or array of str/int
+  detractors: 1, // int
+  show_solutions: "hidden", // default is to not show, or use "top", "left"
+  show_question_numbers: false,
+  style: "A",
+) = {
+  // basically the approach here will be to treat the in cloze parts of the text as static, they obviously can't be shuffled. We can, however, shuffle the solutions (if there are many).
+  // So this algorithm is designed to first parse and reorganize the given text into chunks of text or solutions. Solutions are given an index number.
+  // Following that, solutions are randomized, then given a 'numbering'.
+  // The chunks in the main array are then iterated through. When there is a cloze, the index will be matched in the solutions.
+  // The cloze item can then hold the same numbering as the solution
+  // finally, displayed - and the cloze can show the numbering when highlighting answers is turned on
+
+
+  // this will not be parameterized as it adds a lot of extra logic
+  let cloze_pattern = "\{.*?\}"
+
+  // first, match the cloze pattern
+  let solutions = cloze_content.matches(regex(cloze_pattern))
+
+  // convert the cloze content to various chunks of either text or an array (the array will hold other data through the process)
+  let chunked = ()
+  let last_pos = 0 // last starting index position, should start at 0
+  for (i, item) in solutions.enumerate() {
+    // it may seem like we need to have some condition for when a solution is at position 0,
+    // however, when that occurs the first chunk is an empty string which does not cause an issue
+
+    // get normal text
+    chunked.push(cloze_content.slice(last_pos, item.start))
+
+    // get the item text
+    chunked.push((i, item.text.trim("{").trim("}")))
+
+    // store the end position for next iteration
+    last_pos = item.end
+  }
+  chunked.push(cloze_content.slice(last_pos, cloze_content.len()))
+
+
+  // extract the indexed_solutions
+  let indexed_solutions = chunked.filter(it => type(it) == array)
+
+  // detractors can be either a string, int, or array of strings
+  // convert to an array of (type)
+  if type(detractor_list) == str {
+    detractor_list = (detractor_list,) // convert to array
+  } else if type(detractor_list) == int {
+    detractor_list = (str(detractor_list),) // convert to array containing string
+  } else if detractor_list == none {
+    detractor_list = ()
+  }
+  // make sure all detractors are strings
+  detractor_list = detractor_list.map(it => str(it))
+
+  // convert detractor list to an array of (none, detractor) to match the data shape of solutions
+  detractor_list = detractor_list.map(it => (none, it))
+
+  // ----------------------------
+  // Do randomization and display
+
+  let shuffle_solutions(solutions, detractor_list, detractors, callback) = {
+    // first deal with the detractors
+    rng.update(((rng, _)) => if detractor_list.len() > 1 {
+      choice(rng, detractor_list, size: detractors, replacement: false)
+    } else { (rng, detractor_list) })
+
+    // next, combine the detractors and the solutions
+    rng.update(((rng, shuffled_detractors)) => {
+      let (newrng, shuffled_solutions) = shuffle(rng, solutions + shuffled_detractors)
+      (newrng, shuffled_solutions)
+    })
+    context callback(rng.get().last())
+  }
+
+
+  shuffle_solutions(
+    indexed_solutions,
+    detractor_list,
+    detractors,
+    shuffled_solutions => {
+      // first add numbering to the shuffled solutions
+      let numbered_solutions = shuffled_solutions
+        .enumerate()
+        .map(((i, (index, item))) => (index, item, numbering(style, i + 1)))
+
+      // next, iterate through the chunked items and add numbering to any array type with a matching index to a numbered solution
+      // have to rebuid a new array of chunked items
+      let numbered_chunks = ()
+      for (x, chunk) in chunked.enumerate() {
+        if type(chunk) == array {
+          let (index_a, chunk_text) = chunk
+          for (index_b, item, num) in numbered_solutions {
+            if index_a == index_b {
+              numbered_chunks.push((index_a, chunk_text, num))
+            }
+          }
+        } else {
+          // any normal string will just be appended as is
+          numbered_chunks.push(chunk)
+        }
+      }
+
+
+      // pre-format the chunks
+      numbered_chunks = numbered_chunks.map(it => {
+        // convert these to content items (box)
+        let qnum = []
+        let solution = []
+        if type(it) == array {
+          let (index, chunk_text, num) = it
+          if show_question_numbers {
+            qnum = box(
+              fill: gray.darken(50%),
+              //height: 1.1em,
+              radius: (top-left: 3pt),
+              inset: 3pt,
+              baseline: 0pt,
+              align(center + horizon, text(fill: white, size: 0.9em, QuestionNum)),
+            )
+          }
+          if hl {
+            if show_solutions in ("top", "left") {
+              // we need the numbering
+              solution = align(center + bottom, text(fill: red, num))
+            } else {
+              solution = align(center + bottom, text(fill: red, chunk_text))
+            }
+          }
+          // set the box width defaults which is different depending on show_solutions
+          let box_width = if show_solutions == "hidden" {
+            8 * 11pt
+          } else { 2.5em } // encourage writing the Letter in the smaller box
+          box(
+            stroke: (bottom: 1pt + gray.darken(50%)),
+            height: 12pt,
+            baseline: 2pt,
+            fill: gray.lighten(90%),
+            radius: (top: 3pt),
+            clip: true,
+            [#qnum#box(inset: 3pt, baseline: -0pt, width: box_width, solution)],
+          )
+        } else {
+          // just a chunk of text
+          it
+        }
+      })
+
+      // do some formatting of the solutions
+      numbered_solutions = numbered_solutions.map(it => {
+        let (index, solution, num) = it
+        // box to keep it all together
+        box([#round_numbering(num) #h(0.3em) #solution])
+      })
+
+      let box_inset = 0.8em
+      let cloze_content_display = align(
+        left,
+        box(inset: box_inset, radius: 3pt, stroke: 1pt + gray.lighten(10%), numbered_chunks.join("")),
+      )
+
+      let solution_joiner = if show_solutions == "top" { h(2.5em) } else { linebreak() }
+      let solutions_display = box(
+        inset: box_inset,
+        radius: 3pt,
+        stroke: 1pt + gray.lighten(40%),
+        fill: gray.lighten(70%),
+        numbered_solutions.join(solution_joiner),
+      )
+
+      let columns = 1
+      // the default behavior is related to just a single sentence cloze item with no solutions showed.
+      let displayed_order = (align(left, numbered_chunks.join("")),)
+      if show_solutions == "top" {
+        columns = 1
+        displayed_order = (solutions_display, cloze_content_display)
+      } else if show_solutions == "left" {
+        columns = 2
+        solutions_display = align(left, solutions_display)
+        displayed_order = (cloze_content_display, solutions_display)
+      } else if show_solutions == "hidden" and show_question_numbers {
+        displayed_order = (cloze_content_display,)
+      }
+
+      // wrapping this in a box so that it stays inline (i.e. in combination with #Question)
+      grid(
+        columns: columns, row-gutter: 0.8em, column-gutter: 0.8em, align: center + top,
+        ..displayed_order
+      )
+    },
+  )
+}
+
 
 // FOLLOWING IS FOR THE PAGE TEMPLATE
 
