@@ -18,6 +18,9 @@
 // SET UP FOR THE QUESTION COUNTER
 #let question_counter = counter("question_counter")
 
+// SET UP FOR THE HEADING COUNTER
+#let section_number = counter("section_number")
+
 // Some other stylistic globals
 #let question_fill_color = black
 #let dark_color = black
