@@ -80,14 +80,14 @@
   // Create the triangle shape
   let triangle = polygon(
     fill: dark_color,
-    (0pt, 0pt),
+    (-10pt, 0pt),
     (col2, 0pt),
-    (0pt, content-height),
+    (1pt, content-height),
   )
 
   // Assemble the grid
   grid(
-    columns: (col1, col2, col3), align: left + horizon,
+    columns: (col1, col2, col3), align: left + horizon, gutter: 0pt, column-gutter: 0pt,
 
     // Column 1: Numbering
     box(
@@ -98,7 +98,7 @@
       num,
     ),
     // Column 2: Triangle
-    box(fill: light_gray, triangle),
+    box(fill: light_gray, clip: true, stroke: (left: 2pt + dark_color), triangle),
     // Column 3: Title and Subtitle
     box(
       fill: light_gray,
