@@ -685,13 +685,13 @@
   )
 
   grid(
-    columns: (0.7fr, 1.3fr),
+    columns: (1fr, 0.5fr),
     gutter: 1em,
+    row-gutter: 0.8em,
     align: horizon,
-    box(baseline: 0em, [学績番号: #student_number_box]), box(baseline: 1em, [氏名: #blank(1fr)]),
+    text(size: 1.5em, weight: "bold", title), box(baseline: 0em, [学績番号: #student_number_box]),
+    text(size: 1.2em, supplement), box(baseline: 1em, [氏名: #blank(1fr)]),
   )
-
-  [= #title #h(1em) - #h(1em) #supplement ]
 
 
   // The question counter should be initially stepped here
