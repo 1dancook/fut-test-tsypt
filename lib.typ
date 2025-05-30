@@ -650,7 +650,7 @@
 
   set page(
     paper: "a4",
-    margin: (x: 1.6cm, y: 1.5cm),
+    margin: (x: 1.2cm, y: 1.5cm),
     // show the page number and the seed number
     footer: context [#h(1fr) #counter(page).display("1/1", both: true) #h(1em) #seed #h(1fr)],
     header: if answerkey [#h(1fr) #box(fill: red, inset: 2pt, text(fill: white, "ANSWER KEY")) #h(1fr) ],
