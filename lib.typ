@@ -586,7 +586,7 @@
   text_input = text_input.trim(last_char)
 
   // remove delimiter and store the solution (making it red text)
-  let solution = text(fill: red, weight: "bold", text_input.replace(delimiter, ""))
+  let solution = text(fill: red, weight: "bold", text_input.replace(delimiter, "").replace("  ", " "))
 
   // lower and trim it
   text_input = lower(text_input)
@@ -605,9 +605,7 @@
   shuffle_chunks(
     chunks,
     shuffled => {
-      shuffled = shuffled.map(it => box(inset: 3pt, stroke: 1pt, it))
-
-      let joined_chunks = shuffled.join(h(0.5em))
+      let joined_chunks = shuffled.join([#h(0.8em)/#h(0.8em)])
 
       let full_line = grid(
         columns: (1fr, auto),
@@ -622,9 +620,13 @@
       }
 
 
-      grid(
-        columns: 1, row-gutter: 0.5em,
-        ..display_order
+      box(
+        //inset: (top: 2pt),
+        grid(
+          columns: 1, row-gutter: 1em,
+          ..display_order,
+          v(0.5em)
+        ),
       )
     },
   )
