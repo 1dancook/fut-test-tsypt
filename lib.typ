@@ -47,6 +47,69 @@
 // FOLLOWING ARE FUNCTIONS
 
 
+#let SectionHeading(title, instructions: none) = layout(size => {
+  section_number.step()
+  let num = context { section_number.display() }
+
+  // Define column widths
+  let numbox_width = measure(text(white, 3em, weight: "bold")[#num]).width + 10pt
+  let col1 = numbox_width
+  let col2 = 5pt
+  let col3 = (size.width - col1 - col2)
+
+  let instruction_text = instructions
+  let title = text(1.3em, weight: "bold", title)
+  let instructions = text(instructions)
+  let num = text(white, 2.5em, weight: "bold", num)
+
+  // Measure the height of the title and subtitle to align the triangle
+  let min-height = 32pt
+  let vertical-padding = 14pt
+  let title-box = measure(width: col3, title).height + (vertical-padding)
+  let instructions-box = measure(width: col3, instructions).height + (vertical-padding)
+  let number-box = measure(width: col1, num).height + (vertical-padding)
+  let title_instruction = title-box + instructions-box
+  if instruction_text == none {
+    title_instruction = title-box
+  }
+  let content-height = calc.max(title_instruction, number-box, min-height)
+
+  // Create the triangle shape
+  let triangle = polygon(
+    fill: dark_color,
+    (0pt, 0pt),
+    (col2, 0pt),
+    (0pt, content-height),
+  )
+
+  // Assemble the grid
+  grid(
+    columns: (col1, col2, col3), align: left + horizon,
+
+    // Column 1: Numbering
+    box(
+      fill: dark_color,
+      width: col1,
+      height: content-height,
+      inset: (y: vertical-padding, x: 8pt),
+      num,
+    ),
+    // Column 2: Triangle
+    box(fill: light_gray, triangle),
+    // Column 3: Title and Subtitle
+    box(
+      fill: light_gray,
+      width: col3,
+      height: content-height,
+      inset: (y: vertical-padding, x: 8pt),
+      [
+        #title \ #instructions
+      ],
+    )
+  )
+})
+
+
 #let Instructions(instruction_text) = {
   block(above: 0.7em, text(weight: "regular", size: 10pt, instruction_text))
 }
