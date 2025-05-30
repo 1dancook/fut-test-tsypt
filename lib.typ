@@ -673,6 +673,13 @@
 
   show heading.where(level: 1): element => align(center)[#v(0.5em) #element #v(0.5em)]
 
+  show heading.where(level: 3): element => [#box(width: 5pt, height: 1.3em, fill: dark_color)#box(
+      inset: (x: 1em, y: 3pt),
+      height: 1.3em,
+      fill: light_gray,
+      element,
+    )]
+
   let numbox = box(stroke: 1pt, height: 1.5em, width: 1.5em, baseline: 2pt)
 
   let student_number_box = box(
