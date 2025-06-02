@@ -275,7 +275,7 @@
   detractor_items,
   solutions: none,
   detractors: none,
-  left_pad: 0em,
+  left_pad: 0.5em,
   vertical: false,
   columns: none,
 ) = {
