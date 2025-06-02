@@ -675,6 +675,9 @@
   // split by delimiter
   let chunks = text_input.split(delimiter).map(it => it.trim())
 
+  // upper any I words
+  chunks = chunks.map(it => if it == "i" { "I" } else { it })
+
   // add the detractor (only if it is string)
   if type(detractor) == str { chunks.push(lower(detractor)) }
 
