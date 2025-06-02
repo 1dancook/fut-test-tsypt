@@ -344,7 +344,7 @@
     grid(
       columns: (auto, auto),
       column-gutter: 1.3em,
-      align: horizon,
+      align: top,
       [
         #h(0.5em) // provide a bit of horizontal space
         #if answerkey {
@@ -358,7 +358,7 @@
         } else {
           box(height: 1.2em, width: 1.2em, stroke: 1pt)
         }],
-      [#target_text],
+      box(inset: (top: 3pt), target_text),
     ),
   )
 }
