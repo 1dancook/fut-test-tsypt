@@ -398,6 +398,18 @@
     }
   }
 
+  // TODO: add detractors and detractor_limit which should be processed first for formatting, but then send to the
+  // randomize function to be included in the process and should have a random choice applied given the limit
+
+
+  // TODO: since this creates a number of randomized questions, it should also apply a limit to how many questions are used
+  // this should be done in the randomization as a stage and a new function parameter needs to be added
+  //
+  //
+  // TODO: additionally, if the number of dict items is greater than the question limit, it may be possible to use
+  // values from the non-randomly-chosen items as detractors. This approach would require more careful construction of
+  // items so that a right side value doesn't apply to more than one left side value
+
 
   // Next, send the left and right side to be randomized and continue from there
   let randomize_left_right(left, right, callback) = {
