@@ -782,7 +782,7 @@
     gutter: 1em,
     row-gutter: 0.8em,
     align: horizon,
-    text(size: 1.5em, weight: "bold", title), box(baseline: 0em, [学績番号: #student_number_box]),
+    text(size: 1.5em, weight: "bold", title), box(baseline: 0em, [学績番号: #h(1fr) #student_number_box]),
     text(size: 1.2em, subtitle), box(baseline: 1em, [氏名: #blank(1fr)]),
   )
 
