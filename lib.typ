@@ -109,9 +109,6 @@
 })
 
 
-#let Instructions(instruction_text) = {
-  block(above: 0.7em, text(weight: "regular", size: 10pt, instruction_text))
-}
 
 #let boxwrap(contents) = [
   #box(stroke: 1pt + dark_color, radius: 3pt, inset: 1em)[
