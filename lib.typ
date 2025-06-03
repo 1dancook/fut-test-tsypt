@@ -240,7 +240,7 @@
   columns: auto,
   column-gutter: 1em,
   row-gutter: 1.2em,
-  column-rule: true,
+  column-rule: false,
   breakable: false,
   ..questions,
 ) = {
