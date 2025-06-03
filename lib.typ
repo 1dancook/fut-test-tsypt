@@ -233,14 +233,21 @@
 
 
 #let QuestionSet(
-  q_set,
+  heading: none,
   limit: none,
   randomize: true,
   rows: auto,
   columns: auto,
   column-gutter: 1em,
   row-gutter: 1.2em,
+  column-rule: true,
+  breakable: false,
+  ..questions,
 ) = {
+  // get all the positional argument as questions
+  // everything is is a named argument
+  let q_set = questions.pos()
+
   if limit == none {
     // FIX: handle other values (negative int, etc)
     limit = q_set.len()
@@ -248,10 +255,28 @@
     randomize = true // limit will be applied by random choice so randomization must be on
   }
 
-  let GridLayout(questions) = {
-    grid(
-      rows: rows, columns: columns, column-gutter: column-gutter, row-gutter: row-gutter,
-      ..questions
+  let GridLayout(qs) = {
+    let args = arguments(rows: rows, columns: columns, column-gutter: column-gutter, row-gutter: row-gutter)
+    // if there is a header it will be inserted as the first grid cell
+    // with a span for the entire grid.
+    if heading != none {
+      qs = (grid.cell(colspan: columns, [=== #heading]),) + qs
+    }
+    // insert column-rule (vertical lines)
+    if column-rule and type(columns) == int {
+      for col in range(1, columns) {
+        // offset the start of the vline if there is a heading
+        let start = if heading != none { 1 } else { 0 }
+        qs.push(grid.vline(x: col, start: start, stroke: 1pt))
+      }
+    }
+    // the grid is wrapped in a block to take advantage of breakable
+    block(
+      breakable: breakable,
+      grid(
+        ..args,
+        ..qs
+      ),
     )
   }
 
