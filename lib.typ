@@ -181,9 +181,9 @@
 #let round_numbering(num) = {
   box(
     baseline: 1.5pt,
-    circle(radius: 5pt, fill: none, stroke: 1pt + dark_color, inset: 0pt)[
+    circle(radius: 5pt, fill: dark_color, stroke: 1pt + dark_color, inset: 0pt)[
       #set align(center + horizon)
-      #text(size: 8pt, num)
+      #text(size: 8pt, fill: white, num)
     ],
   )
 }
