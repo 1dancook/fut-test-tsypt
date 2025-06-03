@@ -402,7 +402,7 @@
     // a function to process the key/value strings
     // substitution of #blank for a blank line
     // any typst markup will work
-    let blank_line = box(width: 2.5em, height: 1em, stroke: (bottom: 1pt + dark_color))
+    let blank_line = box(width: 2.5em, stroke: (bottom: 1pt + dark_color))
     return eval(it, mode: "markup", scope: (blank: blank_line))
   }
 
