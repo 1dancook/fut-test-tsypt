@@ -50,7 +50,10 @@
 // FOLLOWING ARE FUNCTIONS
 
 
-#let SectionHeading(title, instructions: none) = layout(size => {
+#let SectionHeading(title, instructions: none, pagebreak: false) = layout(size => {
+  if pagebreak {
+    pagebreak()
+  }
   section_number.step()
   let num = context { section_number.display() }
 
