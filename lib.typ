@@ -294,6 +294,8 @@
   vertical: false,
   columns: none,
 ) = {
+  // TODO: (maybe) add a small box for answers (only when there is one solution). It can be on the left side or right side, this can be done with a grid
+  // FIX: change the api to be consistent -- solutions, detractors, solution_limit, detractor_limit
   let combined_shuffle(solution_items, detractor_items, solutions, detractors, callback) = {
     // first, do random choice and store A
     rng.update(((rng, _)) => choice(rng, solution_items, size: solutions, replacement: false))
