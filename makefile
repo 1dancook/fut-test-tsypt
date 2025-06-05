@@ -23,5 +23,10 @@ uninstall:
 	@echo "Uninstalling $(NAME) version $(VERSION)"
 	rm -rf "$(DEST_DIR)"
 
+preview:
+	typst compile --root . template/main.typ --open
+
+preview-ak:
+	typst compile --root . --open --input answerkey=true template/main.typ
 
 .PHONY: all install uninstall
