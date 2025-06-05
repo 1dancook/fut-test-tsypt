@@ -330,6 +330,7 @@
   left_pad: 0.5em,
   vertical: false,
   columns: none,
+  show_answer_box: false,
 ) = {
   // TODO: (maybe) add a small box for answers (only when there is one solution). It can be on the left side or right side, this can be done with a grid
   // FIX: change the api to be consistent -- solution_limit, detractor_limit, solution_limit, detractor_limit
@@ -383,7 +384,7 @@
     solution_limit,
     detractor_limit,
     shuffled => {
-      options(shuffled, columns: columns, expand: true, left_pad: left_pad)
+      options(shuffled, columns: columns, expand: true, left_pad: left_pad, show_answer_box: show_answer_box)
     },
   )
 }
