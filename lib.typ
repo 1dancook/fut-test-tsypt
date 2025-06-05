@@ -154,16 +154,30 @@
 
 // ------------------------------
 
-#let blank(..args) = [
-  #let arguments = args.named()
-  #if "width" not in args.named().keys() {
-    arguments.width = 40pt
+#let blank(..args) = {
+  // some of the defaults for blank will be determined by whether an answer should be displayed
+  let answer_mode = if args.pos().len() > 0 and answerkey { true } else { false }
+
+  // whatever is provided in positional args will be converted to content
+  let body = []
+  if answer_mode {
+    body = align(horizon, text(fill: red, [#args.pos().at(0)]))
   }
-  #if args.pos().len() > 0 {
-    arguments.width = args.pos().first()
-  }
-  #box(stroke: (bottom: 1pt + dark_color), ..arguments)
-]
+
+
+  let passed_args = (
+    width: args.named().at("width", default: if answer_mode { auto } else { 40pt }),
+    stroke: args.named().at("stroke", default: (if not answer_mode { (bottom: 1pt + black) })),
+    inset: args.named().at("inset", default: 3pt),
+    height: args.named().at("height", default: 1em),
+    baseline: args.named().at("baseline", default: 1pt),
+    outset: (y: 1pt),
+    fill: if answer_mode { (red.transparentize(80%)) },
+  )
+
+  box(..passed_args, body)
+}
+
 
 #let round_numbering(num) = {
   box(
