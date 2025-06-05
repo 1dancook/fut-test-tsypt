@@ -256,7 +256,7 @@
     randomize = true // limit will be applied by random choice so randomization must be on
   }
 
-  columns = if columns == auto { 1 } // use a default value of 1
+  columns = if columns == auto { 1 } else { columns } // use a default value of 1
 
   let GridLayout(qs) = {
     let args = arguments(rows: rows, columns: columns, column-gutter: column-gutter, row-gutter: row-gutter)
