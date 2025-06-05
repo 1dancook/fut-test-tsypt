@@ -196,8 +196,9 @@
   left_pad: 0em,
   right_pad: 0em,
   expand: false,
-  above: 0.5em,
+  above: 0.7em,
   below: 0.5em,
+  show_answer_box: false,
 ) = {
   // FIX: this function should take some randomization but it may be better to use this as a backend function
   // and introduce an API in a different function
@@ -212,21 +213,41 @@
     })
 
   // deal with columns - create an array that is filled with 1fr based on the number of columns
-  if expand {
+  if expand and columns > 1 {
     columns = (1fr,) * columns
   }
 
 
   // Create grid with specified number of columns
+  let option_grid = grid(
+    columns: columns,
+    column-gutter: 2.5em,
+    row-gutter: 0.8em,
+    ..numbered
+  )
+  let empty_box = box(height: 1.3em, width: 1.3em, stroke: 1pt)
+
+  let layout_columns = 2 // for a horizontal layout
+  let layout_order = (option_grid, empty_box) // horizontal layout
+  if columns == 1 {
+    // adjust for a vertical layout
+    layout_order = (empty_box, option_grid)
+    layout_columns = (auto, 1fr)
+  }
+  if not show_answer_box {
+    layout_order = (option_grid,)
+    layout_columns = (auto, auto)
+  }
+
   block(
     inset: (left: left_pad, right: right_pad),
     above: above,
     below: below,
     grid(
-      columns: columns,
-      column-gutter: 2.5em,
-      row-gutter: 0.8em,
-      ..numbered
+      columns: layout_columns,
+      gutter: 1em,
+      align: horizon,
+      ..layout_order
     ),
   )
 }
