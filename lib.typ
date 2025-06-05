@@ -302,22 +302,22 @@
 
 
 #let MultipleChoice(
-  solution_items,
-  detractor_items,
-  solutions: none,
-  detractors: none,
+  solutions,
+  detractors,
+  solution_limit: none,
+  detractor_limit: none,
   left_pad: 0.5em,
   vertical: false,
   columns: none,
 ) = {
   // TODO: (maybe) add a small box for answers (only when there is one solution). It can be on the left side or right side, this can be done with a grid
-  // FIX: change the api to be consistent -- solutions, detractors, solution_limit, detractor_limit
-  let combined_shuffle(solution_items, detractor_items, solutions, detractors, callback) = {
+  // FIX: change the api to be consistent -- solution_limit, detractor_limit, solution_limit, detractor_limit
+  let combined_shuffle(solutions, detractors, solution_limit, detractor_limit, callback) = {
     // first, do random choice and store A
-    rng.update(((rng, _)) => choice(rng, solution_items, size: solutions, replacement: false))
+    rng.update(((rng, _)) => choice(rng, solutions, size: solution_limit, replacement: false))
     // second, do choice from B and store A+B
     rng.update(((rng, shuffled_solutions)) => {
-      let (new_rng, shuffled_detractors) = choice(rng, detractor_items, size: detractors, replacement: false)
+      let (new_rng, shuffled_detractors) = choice(rng, detractors, size: detractor_limit, replacement: false)
       (new_rng, shuffled_solutions + shuffled_detractors)
     })
     // third, do shuffle of A+B (combined options)
@@ -329,41 +329,41 @@
 
   // The case when a single solution is provided.
   // convert it to an array for later
-  if type(solution_items) != array {
-    solution_items = (solution_items,)
+  if type(solutions) != array {
+    solutions = (solutions,)
   }
 
   // handle any solution items being an integer -- convert to string
-  for (index, item) in solution_items.enumerate() {
+  for (index, item) in solutions.enumerate() {
     if type(item) == int {
-      solution_items.at(index) = str(solution_items.at(index))
+      solutions.at(index) = str(solutions.at(index))
     }
   }
 
   // handle any detractor items being an integer -- convert to string
-  for (index, item) in detractor_items.enumerate() {
+  for (index, item) in detractors.enumerate() {
     if type(item) == int {
-      detractor_items.at(index) = str(detractor_items.at(index))
+      detractors.at(index) = str(detractors.at(index))
     }
   }
 
-  // highlight all solution_items
-  solution_items = solution_items.map(it => if answerkey { hl_solution(it) } else { it })
+  // highlight all solutions
+  solutions = solutions.map(it => if answerkey { hl_solution(it) } else { it })
 
-  if solutions == none { solutions = solution_items.len() }
-  if detractors == none { detractors = detractor_items.len() }
+  if solution_limit == none { solution_limit = solutions.len() }
+  if detractor_limit == none { detractor_limit = detractors.len() }
 
   // set the number of columns to use
-  columns = if vertical { 1 } else if columns != none { columns } else { solutions + detractors }
+  columns = if vertical { 1 } else if columns != none { columns } else { solution_limit + detractor_limit }
   // send to nested function to shuffle, display the results from the callback
   combined_shuffle(
-    solution_items,
-    detractor_items,
     solutions,
     detractors,
-    shuffled => [
-      #options(shuffled, columns: columns, expand: true, left_pad: left_pad)
-    ],
+    solution_limit,
+    detractor_limit,
+    shuffled => {
+      options(shuffled, columns: columns, expand: true, left_pad: left_pad)
+    },
   )
 }
 
