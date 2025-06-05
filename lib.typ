@@ -242,6 +242,8 @@
     randomize = true // limit will be applied by random choice so randomization must be on
   }
 
+  columns = if columns == auto { 1 } // use a default value of 1
+
   let GridLayout(qs) = {
     let args = arguments(rows: rows, columns: columns, column-gutter: column-gutter, row-gutter: row-gutter)
     // if there is a header it will be inserted as the first grid cell
