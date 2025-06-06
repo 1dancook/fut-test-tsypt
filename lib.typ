@@ -231,8 +231,8 @@
   let layout_order = (option_grid, empty_box) // horizontal layout
   if columns == 1 {
     // adjust for a vertical layout
-    layout_order = (empty_box, option_grid)
-    layout_columns = (auto, 1fr)
+    layout_order = (option_grid, empty_box)
+    layout_columns = (1fr, 0.2fr)
   }
   if not show_answer_box {
     layout_order = (option_grid,)
