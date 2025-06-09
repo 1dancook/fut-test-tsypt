@@ -2,6 +2,16 @@
 Typst template and functions for creating dynamic (randomly) organized tests.
 
 
+## Project Goals
+- test creation with randomization of question order and question options (i.e. in multiple choice questions)
+- easy test or worksheet creation with template(s)
+- straightforward API with multiple use cases (especially in combination with Typst layout)
+- test creation in plain text
+- the ability to have a question (and solution/detractor) pool that is drawn from in compilation
+- the ability to display answers on an answer key
+- automatic generation of question numbering
+
+
 ## Installation
 
 Run `make install` to install on macos. Other OS not implemented but all files can be copied to the appropriate local installation.
@@ -9,12 +19,12 @@ Run `make install` to install on macos. Other OS not implemented but all files c
 ## Usage
 
 ### In a .typ document
-Import with: `#import "@fut/fut-test:x.x.x": *` where x.x.x is the version number.
+Import with: `#import "@local/fut-test:x.x.x": *` where x.x.x is the version number.
 
 Apply the template:
 
 ```typst
-#import "@fut/fut-test:0.1.2": * // use current version
+#import "@local/fut-test:0.1.4": * // use current version
 
 #show: futtest.with(
   title: "The Test Title",
@@ -39,12 +49,12 @@ By default, if compiled with `typst compile <filename>` the seed for randomizati
 One of the main use cases is with multiple choice questions. Question order and option order is randomized:
 
 ```typst
-#QuestionSet((
-Question[Some multiple choice question text
-// some options, randomize them
-#MultipleChoice("Option A", ("Option B", "Option C"))
+#QuestionSet(
+  Question[Some multiple choice question text
+  // some options, randomize them
+  #MultipleChoice("Option A", ("Option B", "Option C"))
 ]
-))
+)
 ```
 
 
@@ -56,7 +66,7 @@ Question[Some multiple choice question text
 - [x] convenience function for blanks --> `#blank()`
 - [x] formatting: box wrap with stroke --> `#boxwrap()`
 - [x] convenience function for multiple choice (one or multiple possible solutions, several possible detractors). All shuffled and displayed as options --> `MultipleChoice`
-- [ ] for `blank`, add the ability to provide a solution that will be highlighted
+- [x] for `blank`, add the ability to provide a solution that will be highlighted
 - [x] options: add a limit to QuestionSet (i.e. so there could be many questions but they are limited)
 - [x] cli/compiling: default seed as year/term determined by creation date
 - [ ] formatting: box wrap with fill
@@ -71,8 +81,26 @@ Question[Some multiple choice question text
 - [x] convenience function for #False (true/false) -- `#False`
 - [x] convenience function for making matching lists (i.e. key value pairs that get shuffled).
   - --> `#Match`
-- [ ] convenience function for shuffling words/phrases in a sentence. I.e. input=`this | is | the | input` will be split on `|` and shuffled, displayed with `/` separated values. Answer sheet will show the original.
+- [x] convenience function for shuffling words/phrases in a sentence. I.e. input=`this | is | the | input` will be split on `|` and shuffled, displayed with `/` separated values. Answer sheet will show the original. --> `Unscramble`
 - [x] Convenience function for cloze passages. I.e. mark the targets with `{}` and the targets will be put in a list. Optional extra words for detractors.
   - --> `#Cloze`
 - [ ] convenience function for question and lines (i.e. writing space)
 - [ ] cloze with an option to circle (i.e. "(I am / I is) a nice guy.")
+- [ ] a 'check' options (multiple choice, but a checkbox is displayed) ... use case: "check all that apply" or "check all that are true"
+- [x] a change to multiple choice so that when there is only one solution a box is presented to fill it in (and make it small)
+- [ ] add parameter to Option to use checkboxes (instead of numbering)
+- [ ] add a 'checkbox' function so that boxes can be used anywhere (i.e. in instructions)
+- [ ] ability to use any kind of string as a seed (requires some conversion)
+
+
+### Todo for repo
+
+- port and make examples of different parts of the package
+  - [ ] MultipleChoice
+  - [ ] utilities (blank, etc)
+  - [ ] Question / QuestionSet
+  - [ ] True/False
+  - [ ] Unscramble
+  - [ ] Match
+  - [ ] Cloze
+
