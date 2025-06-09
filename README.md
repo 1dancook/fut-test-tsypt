@@ -91,11 +91,18 @@ One of the main use cases is with multiple choice questions. Question order and 
 - [ ] add parameter to Option to use checkboxes (instead of numbering)
 - [ ] add a 'checkbox' function so that boxes can be used anywhere (i.e. in instructions)
 - [ ] ability to use any kind of string as a seed (requires some conversion)
-
+- [ ] Unscramble variant that can be used for bubble sheet. This requires that lines/boxes are available to write in (i.e. the same number of blank lines as there are options). The blanks are letter ordered (A to whatever). After the options are unscrambled, there will be a target blank (and its letter) that is used for the bubble sheet. 
+  - more thoughts: this shouldn't be randomized so much but should require explicit indication about which option will be the answer (otherwise linguistically its weird)
+- [ ] template for worksheet
+- [ ] ability to add notes ... study notes / teacher notes
+- [ ] move seed up to header on first page
+- [ ] add a 'score' box in the header on the first page
+- [ ] add a 'conversation' function to layout a conversation in a simple way
+- [ ] make a small section heading version? (is this needed? i.e. maybe for a worksheet)
 
 ### Todo for repo
 
-- port and make examples of different parts of the package
+- [ ] port and make examples of different parts of the package
   - [ ] MultipleChoice
   - [ ] utilities (blank, etc)
   - [ ] Question / QuestionSet
@@ -104,3 +111,4 @@ One of the main use cases is with multiple choice questions. Question order and 
   - [ ] Match
   - [ ] Cloze
 
+- [ ] rename the repo to be something more generic - idea: "langtest"
