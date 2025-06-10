@@ -99,6 +99,8 @@ One of the main use cases is with multiple choice questions. Question order and 
 - [ ] add a 'score' box in the header on the first page
 - [ ] add a 'conversation' function to layout a conversation in a simple way
 - [ ] make a small section heading version? (is this needed? i.e. maybe for a worksheet)
+- [ ] in `Match` there is a blank that can be used: make another option so that we have a box filled with three question marks.
+- [ ] modify `blank()` to support being a box filled with three question marks
 
 ### Todo for repo
 
