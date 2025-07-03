@@ -487,10 +487,12 @@
       )
 
       // apply detractor limit in random choice
-      let (newrng, selected_detractors) = choice(newrng, detractors, size: detractor_limit, replacement: false)
-      // push the detractors to the right side
-      for detractor in selected_detractors {
-        right_side.push((none, process_string(detractor)))
+      if detractors.len() > 0 {
+        let (newrng, selected_detractors) = choice(newrng, detractors, size: detractor_limit, replacement: false)
+        // push the detractors to the right side
+        for detractor in selected_detractors {
+          right_side.push((none, process_string(detractor)))
+        }
       }
 
       // Finally shuffle the left and right sides
