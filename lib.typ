@@ -441,6 +441,9 @@
     detractors = () // empty array
   }
 
+  // process all detractors so that they are strings
+  detractors = detractors.map(str)
+
   if detractor_limit == none and detractors.len() > 0 {
     // default behavior will be to set the detractor length to the supplied detractors
     // explicitly set this with detractor_limit otherwise
