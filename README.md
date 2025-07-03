@@ -101,6 +101,9 @@ One of the main use cases is with multiple choice questions. Question order and 
 - [ ] make a small section heading version? (is this needed? i.e. maybe for a worksheet)
 - [ ] in `Match` there is a blank that can be used: make another option so that we have a box filled with three question marks.
 - [ ] modify `blank()` to support being a box filled with three question marks
+- [ ] add a number of assertions for the functions I have and properly deal with data types that come in (i.e. some functions can take str, int, array, content)
+- [x] Add limit and detractor limit to `Match`
+- [x] Change detractors for `Match` to take str, array, or int
 
 ### Todo for repo
 
