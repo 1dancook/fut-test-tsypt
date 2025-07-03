@@ -424,63 +424,89 @@
 
 
 
-#let Match(pairs, detractors: none, style: "A", col_size: (1fr, 1fr)) = {
+#let Match(pairs, limit: none, detractors: none, detractor_limit: none, style: "A", col_size: (1fr, 1fr)) = {
+  if limit == none {
+    limit = pairs.len()
+  }
+  if limit > pairs.len() {
+    limit = pairs.len() // can't have a limit more than the pairs
+  }
+
+  // Convert detractor to array
+  if type(detractors) == str {
+    detractors = (detractors,)
+  } else if type(detractors) == int {
+    detractors = (str(detractors),)
+  } else if detractors == none {
+    detractors = () // empty array
+  }
+
+  if detractor_limit == none and detractors.len() > 0 {
+    // default behavior will be to set the detractor length to the supplied detractors
+    // explicitly set this with detractor_limit otherwise
+    detractor_limit = detractors.len()
+  } else if detractor_limit == none and detractors.len() == 0 {
+    detractor_limit = 0
+  }
+
+  if detractor_limit > detractors.len() {
+    detractor_limit = detractors.len() // can't have a limit more than amount of detractors
+  }
+
   let process_string(it) = {
     // a function to process the key/value strings
     // substitution of #blank for a blank line
     // any typst markup will work
-    let blank_line = box(width: 2.5em, stroke: (bottom: 1pt + dark_color))
+    let blank_line = box(
+      width: 2.5em,
+      stroke: (bottom: 1pt + dark_color),
+    ) // FIX: move this out so I can use it elsewhere
     return eval(it, mode: "markup", scope: (blank: blank_line))
   }
 
-  // first, give the left side and right side an identical index and make two arrays
-  let (left_side, right_side) = (
-    pairs.keys().enumerate().map(((i, item)) => (i, process_string(item))),
-    pairs.values().enumerate().map(((i, item)) => (i, process_string(item))),
-  )
-
-
-  // Next, add any detractors on the right side
-  // the index and value will be the same here as the index doesn't matter
-  // for detractors
-  if detractors != none {
-    if type(detractors) == str {
-      right_side.push((detractors, detractors))
-    } else if type(detractors) == array {
-      for item in detractors {
-        right_side.push((item, item))
-      }
-    }
-  }
-
-  // TODO: add detractors and detractor_limit which should be processed first for formatting, but then send to the
-  // randomize function to be included in the process and should have a random choice applied given the limit
-
-
-  // TODO: since this creates a number of randomized questions, it should also apply a limit to how many questions are used
-  // this should be done in the randomization as a stage and a new function parameter needs to be added
-  //
-  //
-  // TODO: additionally, if the number of dict items is greater than the question limit, it may be possible to use
-  // values from the non-randomly-chosen items as detractors. This approach would require more careful construction of
-  // items so that a right side value doesn't apply to more than one left side value
-
 
   // Next, send the left and right side to be randomized and continue from there
-  let randomize_left_right(left, right, callback) = {
-    // returns an array of (left, right)
-    rng.update(((rng, _)) => shuffle(rng, left))
-    rng.update(((rng, shuffled_left)) => {
-      let (newrng, shuffled_right) = shuffle(rng, right)
-      (rng, (shuffled_left, shuffled_right))
+  let randomize_pairs(pairs, limit, detractors, detractor_limit, callback) = {
+    // First randomize the dictionary pairs
+
+    rng.update(((oldrng, _)) => {
+      // build a new dictionary base on randomly selected keys from the old dictionary
+      let (newrng, chosen_keys) = choice(oldrng, pairs.keys(), size: limit, replacement: false)
+      let new_pairs = (:)
+      for k in chosen_keys {
+        new_pairs.insert(k, pairs.at(k))
+      }
+
+      // first, give the left side and right side an identical index and make two arrays
+      let (left_side, right_side) = (
+        new_pairs.keys().enumerate().map(((i, item)) => (i, process_string(item))),
+        new_pairs.values().enumerate().map(((i, item)) => (i, process_string(item))),
+      )
+
+      // apply detractor limit in random choice
+      let (newrng, selected_detractors) = choice(newrng, detractors, size: detractor_limit, replacement: false)
+      // push the detractors to the right side
+      for detractor in selected_detractors {
+        right_side.push((none, process_string(detractor)))
+      }
+
+      // Finally shuffle the left and right sides
+      let (newrng, shuffled_left) = shuffle(newrng, left_side)
+      let (newrng, shuffled_right) = shuffle(newrng, right_side)
+
+      // the function needs to return an array of the left and right side
+      (newrng, (shuffled_left, shuffled_right))
     })
+
     context callback(rng.get().last())
   }
 
 
-  randomize_left_right(
-    left_side,
-    right_side,
+  randomize_pairs(
+    pairs,
+    limit,
+    detractors,
+    detractor_limit,
     shuffled => {
       let (left_side, right_side) = shuffled
 
@@ -508,7 +534,7 @@
       grid(
         columns: col_size,
         column-gutter: 4em,
-        align: horizon,
+        align: top,
 
         [
           #for (index, key, num) in numbered_left [
