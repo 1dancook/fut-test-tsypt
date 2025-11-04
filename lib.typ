@@ -8,11 +8,17 @@
 //
 // The default values here are to use the current year and term
 // Any custom/manual seed should be done in the command line
-#let _year = datetime.today().year()
-#let _month = datetime.today().month()
-#let _term = if _month >= 4 and _month <= 8 { 1 } else { 2 }
-#let _default_seed = str(_year) + "0" + str(_term) // string
-#let seed = int(sys.inputs.at("seed", default: _default_seed))
+//#let _year = datetime.today().year()
+//#let _month = datetime.today().month()
+//#let _term = if _month >= 4 and _month <= 8 { 1 } else { 2 }
+//#let _default_seed = str(_year) + "0" + str(_term) // string
+// will use a somewhat naive unix timestamp (no timezone integration) for a default seed
+// This is preferable to using a term/date approach since tests can be generated once
+// If a specific test should be generated, use the --input seed=... for compilation
+#let _dt = datetime.today()
+#let _unix_timestamp = (_dt - datetime(year: 1970, month: 1, day: 1)).seconds()
+//#let seed = int(sys.inputs.at("seed", default: _default_seed))
+#let seed = int(sys.inputs.at("seed", default: _unix_timestamp))
 #let rng = state("rng", (gen-rng(seed), none))
 
 // SET UP FOR THE QUESTION COUNTER
@@ -836,7 +842,11 @@
     paper: "a4",
     margin: (x: 1.2cm, y: 1.5cm),
     // show the page number and the seed number
-    footer: context [#h(1fr) #counter(page).display("1/1", both: true) #h(1em) #seed #h(1fr)],
+    footer: context grid(
+      columns: (1fr / 3, 1fr / 3, 1fr / 3),
+      align: (auto, center, right),
+      [], [#counter(page).display("1/1", both: true)], [#seed],
+    ),
     header: if answerkey [#h(1fr) #box(fill: red, inset: 2pt, text(fill: white, "ANSWER KEY")) #h(1fr) ],
   )
 
