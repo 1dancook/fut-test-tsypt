@@ -6,18 +6,19 @@
 // It seems as though using `context` would fix this, but it doesn't work.
 // A minimal example to reproduce and work around the issue might be better, but at the moment the sys.inputs allows for scripting the generation of tests based on year and term and this is sufficient
 //
-// The default values here are to use the current year and term
-// Any custom/manual seed should be done in the command line
-//#let _year = datetime.today().year()
-//#let _month = datetime.today().month()
-//#let _term = if _month >= 4 and _month <= 8 { 1 } else { 2 }
-//#let _default_seed = str(_year) + "0" + str(_term) // string
-// will use a somewhat naive unix timestamp (no timezone integration) for a default seed
-// This is preferable to using a term/date approach since tests can be generated once
-// If a specific test should be generated, use the --input seed=... for compilation
+/* --- Regarding Random Seed ---
+The default seed will use a somewhat naive unix timestamp (no timezone integration) for a default seed.
+If a specific test should be generated, use the --input seed=... when compiling
+
+Since the datetime implementation in typst does not implement a .now() method,
+the timestamp generated here is based on the day rather than a minute
+this seems reasonable for most use cases.
+
+To compile with the actual timestamp requires using the CLI:
+--input seed=$(date +%s)
+*/
 #let _dt = datetime.today()
 #let _unix_timestamp = (_dt - datetime(year: 1970, month: 1, day: 1)).seconds()
-//#let seed = int(sys.inputs.at("seed", default: _default_seed))
 #let seed = int(sys.inputs.at("seed", default: _unix_timestamp))
 #let rng = state("rng", (gen-rng(seed), none))
 
