@@ -331,23 +331,23 @@ To compile with the actual timestamp requires using the CLI:
 
 #let MultipleChoice(
   solutions,
-  detractors,
+  distractors,
   solution_limit: none,
-  detractor_limit: none,
+  distractor_limit: none,
   left_pad: 0.5em,
   vertical: false,
   columns: none,
   show_answer_box: false,
 ) = {
   // TODO: (maybe) add a small box for answers (only when there is one solution). It can be on the left side or right side, this can be done with a grid
-  // FIX: change the api to be consistent -- solution_limit, detractor_limit, solution_limit, detractor_limit
-  let combined_shuffle(solutions, detractors, solution_limit, detractor_limit, callback) = {
+  // FIX: change the api to be consistent -- solution_limit, distractor_limit, solution_limit, distractor_limit
+  let combined_shuffle(solutions, distractors, solution_limit, distractor_limit, callback) = {
     // first, do random choice and store A
     rng.update(((rng, _)) => choice(rng, solutions, size: solution_limit, replacement: false))
     // second, do choice from B and store A+B
     rng.update(((rng, shuffled_solutions)) => {
-      let (new_rng, shuffled_detractors) = choice(rng, detractors, size: detractor_limit, replacement: false)
-      (new_rng, shuffled_solutions + shuffled_detractors)
+      let (new_rng, shuffled_distractors) = choice(rng, distractors, size: distractor_limit, replacement: false)
+      (new_rng, shuffled_solutions + shuffled_distractors)
     })
     // third, do shuffle of A+B (combined options)
     rng.update(((rng, combined_options)) => shuffle(rng, combined_options))
@@ -369,10 +369,10 @@ To compile with the actual timestamp requires using the CLI:
     }
   }
 
-  // handle any detractor items being an integer -- convert to string
-  for (index, item) in detractors.enumerate() {
+  // handle any distractor items being an integer -- convert to string
+  for (index, item) in distractors.enumerate() {
     if type(item) == int {
-      detractors.at(index) = str(detractors.at(index))
+      distractors.at(index) = str(distractors.at(index))
     }
   }
 
@@ -380,16 +380,16 @@ To compile with the actual timestamp requires using the CLI:
   solutions = solutions.map(it => if answerkey { hl_solution(it) } else { it })
 
   if solution_limit == none { solution_limit = solutions.len() }
-  if detractor_limit == none { detractor_limit = detractors.len() }
+  if distractor_limit == none { distractor_limit = distractors.len() }
 
   // set the number of columns to use
-  columns = if vertical { 1 } else if columns != none { columns } else { solution_limit + detractor_limit }
+  columns = if vertical { 1 } else if columns != none { columns } else { solution_limit + distractor_limit }
   // send to nested function to shuffle, display the results from the callback
   combined_shuffle(
     solutions,
-    detractors,
+    distractors,
     solution_limit,
-    detractor_limit,
+    distractor_limit,
     shuffled => {
       options(shuffled, columns: columns, expand: true, left_pad: left_pad, show_answer_box: show_answer_box)
     },
@@ -431,7 +431,7 @@ To compile with the actual timestamp requires using the CLI:
 
 
 
-#let Match(pairs, limit: none, detractors: none, detractor_limit: none, style: "A", col_size: (1fr, 1fr)) = {
+#let Match(pairs, limit: none, distractors: none, distractor_limit: none, style: "A", col_size: (1fr, 1fr)) = {
   if limit == none {
     limit = pairs.len()
   }
@@ -439,28 +439,28 @@ To compile with the actual timestamp requires using the CLI:
     limit = pairs.len() // can't have a limit more than the pairs
   }
 
-  // Convert detractor to array
-  if type(detractors) == str {
-    detractors = (detractors,)
-  } else if type(detractors) == int {
-    detractors = (str(detractors),)
-  } else if detractors == none {
-    detractors = () // empty array
+  // Convert distractor to array
+  if type(distractors) == str {
+    distractors = (distractors,)
+  } else if type(distractors) == int {
+    distractors = (str(distractors),)
+  } else if distractors == none {
+    distractors = () // empty array
   }
 
-  // process all detractors so that they are strings
-  detractors = detractors.map(str)
+  // process all distractors so that they are strings
+  distractors = distractors.map(str)
 
-  if detractor_limit == none and detractors.len() > 0 {
-    // default behavior will be to set the detractor length to the supplied detractors
-    // explicitly set this with detractor_limit otherwise
-    detractor_limit = detractors.len()
-  } else if detractor_limit == none and detractors.len() == 0 {
-    detractor_limit = 0
+  if distractor_limit == none and distractors.len() > 0 {
+    // default behavior will be to set the distractor length to the supplied distractors
+    // explicitly set this with distractor_limit otherwise
+    distractor_limit = distractors.len()
+  } else if distractor_limit == none and distractors.len() == 0 {
+    distractor_limit = 0
   }
 
-  if detractor_limit > detractors.len() {
-    detractor_limit = detractors.len() // can't have a limit more than amount of detractors
+  if distractor_limit > distractors.len() {
+    distractor_limit = distractors.len() // can't have a limit more than amount of distractors
   }
 
   let process_string(it) = {
@@ -476,7 +476,7 @@ To compile with the actual timestamp requires using the CLI:
 
 
   // Next, send the left and right side to be randomized and continue from there
-  let randomize_pairs(pairs, limit, detractors, detractor_limit, callback) = {
+  let randomize_pairs(pairs, limit, distractors, distractor_limit, callback) = {
     // First randomize the dictionary pairs
 
     rng.update(((oldrng, _)) => {
@@ -493,12 +493,12 @@ To compile with the actual timestamp requires using the CLI:
         new_pairs.values().enumerate().map(((i, item)) => (i, process_string(item))),
       )
 
-      // apply detractor limit in random choice
-      if detractors.len() > 0 {
-        let (newrng, selected_detractors) = choice(newrng, detractors, size: detractor_limit, replacement: false)
-        // push the detractors to the right side
-        for detractor in selected_detractors {
-          right_side.push((none, process_string(detractor)))
+      // apply distractor limit in random choice
+      if distractors.len() > 0 {
+        let (newrng, selected_distractors) = choice(newrng, distractors, size: distractor_limit, replacement: false)
+        // push the distractors to the right side
+        for distractor in selected_distractors {
+          right_side.push((none, process_string(distractor)))
         }
       }
 
@@ -517,8 +517,8 @@ To compile with the actual timestamp requires using the CLI:
   randomize_pairs(
     pairs,
     limit,
-    detractors,
-    detractor_limit,
+    distractors,
+    distractor_limit,
     shuffled => {
       let (left_side, right_side) = shuffled
 
@@ -570,8 +570,8 @@ To compile with the actual timestamp requires using the CLI:
 
 #let Cloze(
   cloze_content, // a string
-  detractor_list: none, // str, int, or array of str/int
-  detractors: 1, // int
+  distractor_list: none, // str, int, or array of str/int
+  distractors: 1, // int
   show_solutions: "hidden", // default is to not show, or use "top", "left"
   show_question_numbers: false,
   style: "A",
@@ -612,33 +612,33 @@ To compile with the actual timestamp requires using the CLI:
   // extract the indexed_solutions
   let indexed_solutions = chunked.filter(it => type(it) == array)
 
-  // detractors can be either a string, int, or array of strings
+  // distractors can be either a string, int, or array of strings
   // convert to an array of (type)
-  if type(detractor_list) == str {
-    detractor_list = (detractor_list,) // convert to array
-  } else if type(detractor_list) == int {
-    detractor_list = (str(detractor_list),) // convert to array containing string
-  } else if detractor_list == none {
-    detractor_list = ()
+  if type(distractor_list) == str {
+    distractor_list = (distractor_list,) // convert to array
+  } else if type(distractor_list) == int {
+    distractor_list = (str(distractor_list),) // convert to array containing string
+  } else if distractor_list == none {
+    distractor_list = ()
   }
-  // make sure all detractors are strings
-  detractor_list = detractor_list.map(it => str(it))
+  // make sure all distractors are strings
+  distractor_list = distractor_list.map(it => str(it))
 
-  // convert detractor list to an array of (none, detractor) to match the data shape of solutions
-  detractor_list = detractor_list.map(it => (none, it))
+  // convert distractor list to an array of (none, distractor) to match the data shape of solutions
+  distractor_list = distractor_list.map(it => (none, it))
 
   // ----------------------------
   // Do randomization and display
 
-  let shuffle_solutions(solutions, detractor_list, detractors, callback) = {
-    // first deal with the detractors
-    rng.update(((rng, _)) => if detractor_list.len() > 1 {
-      choice(rng, detractor_list, size: detractors, replacement: false)
-    } else { (rng, detractor_list) })
+  let shuffle_solutions(solutions, distractor_list, distractors, callback) = {
+    // first deal with the distractors
+    rng.update(((rng, _)) => if distractor_list.len() > 1 {
+      choice(rng, distractor_list, size: distractors, replacement: false)
+    } else { (rng, distractor_list) })
 
-    // next, combine the detractors and the solutions
-    rng.update(((rng, shuffled_detractors)) => {
-      let (newrng, shuffled_solutions) = shuffle(rng, solutions + shuffled_detractors)
+    // next, combine the distractors and the solutions
+    rng.update(((rng, shuffled_distractors)) => {
+      let (newrng, shuffled_solutions) = shuffle(rng, solutions + shuffled_distractors)
       (newrng, shuffled_solutions)
     })
     context callback(rng.get().last())
@@ -647,8 +647,8 @@ To compile with the actual timestamp requires using the CLI:
 
   shuffle_solutions(
     indexed_solutions,
-    detractor_list,
-    detractors,
+    distractor_list,
+    distractors,
     shuffled_solutions => {
       // first add numbering to the shuffled solutions
       let numbered_solutions = shuffled_solutions
@@ -760,7 +760,7 @@ To compile with the actual timestamp requires using the CLI:
 
 
 
-#let Unscramble(text_input, detractor: none, hint: none, delimiter: "|") = {
+#let Unscramble(text_input, distractor: none, hint: none, delimiter: "|") = {
   // trim it
   text_input = text_input.trim()
 
@@ -783,8 +783,8 @@ To compile with the actual timestamp requires using the CLI:
   // upper any I words
   chunks = chunks.map(it => if it == "i" { "I" } else { it })
 
-  // add the detractor (only if it is string)
-  if type(detractor) == str { chunks.push(lower(detractor)) }
+  // add the distractor (only if it is string)
+  if type(distractor) == str { chunks.push(lower(distractor)) }
 
   let shuffle_chunks(chunks, callback) = {
     rng.update(((rng, _)) => shuffle(rng, chunks))

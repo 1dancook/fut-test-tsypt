@@ -25,12 +25,12 @@ Longer passages might require a few features:
 - multiple cloze items
 - question numbering beside blanks
 - a list of solutions visible to select from
-- any number of detractor(s)
+- any number of distractor(s)
 
 These are made possible with several parameters apart from applying cloze syntax to the text:
 - show_solutions: "top" or "left"
-- detractor_list -- use a str, int, or array
-- detractors -- limit the number of detractors
+- distractor_list -- use a str, int, or array
+- distractors -- limit the number of distractors
 - show_question_numbers -- shows the question numbers beside the cloze blanks
 
 #let cloze_passage = "The {scientist} carefully recorded the results of the {experiment}, noting even the slightest variations in temperature. As the {data} accumulated, patterns began to emerge that challenged existing {theories}. Despite the late hour, she remained focused, driven by a sense of {curiosity} and purpose."
@@ -49,9 +49,9 @@ These are made possible with several parameters apart from applying cloze syntax
 
 === Example: `show_solutions: "left"` with `show_question_numbers: true`
 
-This example has one detractor added.
+This example has one distractor added.
 
-#Cloze(cloze_passage, detractor_list: "detractor", show_solutions: "left", show_question_numbers: true)
+#Cloze(cloze_passage, distractor_list: "distractor", show_solutions: "left", show_question_numbers: true)
 
 
 === Example: Explicit `show_solutions: "hidden"` when there are multiple solutions
@@ -67,20 +67,20 @@ It is possible to have an empty cloze item, and a blank line will still be used 
 #Question[#Cloze("This is a {} sentence.")]
 
 
-=== Explicitly display detractors using `show_solutions`
+=== Explicitly display distractors using `show_solutions`
 
 
 #Question(
   Cloze(
     "The {scientist} carefully recorded the results of the {experiment}, noting even the slightest variations in temperature.",
-    detractor_list: "detractor",
+    distractor_list: "distractor",
   ),
 )
 
 #Question[
   #Cloze(
     "The {scientist} carefully recorded the results of the {experiment}, noting even the slightest variations in temperature.",
-    detractor_list: "detractor",
+    distractor_list: "distractor",
     show_solutions: "left",
   )
 ]

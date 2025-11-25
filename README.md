@@ -7,7 +7,7 @@ Typst template and functions for creating dynamic (randomly) organized tests.
 - easy test or worksheet creation with template(s)
 - straightforward API with multiple use cases (especially in combination with Typst layout)
 - test creation in plain text
-- the ability to have a question (and solution/detractor) pool that is drawn from in compilation
+- the ability to have a question (and solution/distractor) pool that is drawn from in compilation
 - the ability to display answers on an answer key
 - automatic generation of question numbering
 
@@ -65,7 +65,7 @@ One of the main use cases is with multiple choice questions. Question order and 
 - [x] convenience function for just having a --> `#Q`
 - [x] convenience function for blanks --> `#blank()`
 - [x] formatting: box wrap with stroke --> `#boxwrap()`
-- [x] convenience function for multiple choice (one or multiple possible solutions, several possible detractors). All shuffled and displayed as options --> `MultipleChoice`
+- [x] convenience function for multiple choice (one or multiple possible solutions, several possible distractors). All shuffled and displayed as options --> `MultipleChoice`
 - [x] for `blank`, add the ability to provide a solution that will be highlighted
 - [x] options: add a limit to QuestionSet (i.e. so there could be many questions but they are limited)
 - [x] cli/compiling: default seed as year/term determined by creation date
@@ -82,7 +82,7 @@ One of the main use cases is with multiple choice questions. Question order and 
 - [x] convenience function for making matching lists (i.e. key value pairs that get shuffled).
   - --> `#Match`
 - [x] convenience function for shuffling words/phrases in a sentence. I.e. input=`this | is | the | input` will be split on `|` and shuffled, displayed with `/` separated values. Answer sheet will show the original. --> `Unscramble`
-- [x] Convenience function for cloze passages. I.e. mark the targets with `{}` and the targets will be put in a list. Optional extra words for detractors.
+- [x] Convenience function for cloze passages. I.e. mark the targets with `{}` and the targets will be put in a list. Optional extra words for distractors.
   - --> `#Cloze`
 - [ ] convenience function for question and lines (i.e. writing space)
 - [ ] cloze with an option to circle (i.e. "(I am / I is) a nice guy.")
@@ -102,8 +102,8 @@ One of the main use cases is with multiple choice questions. Question order and 
 - [ ] in `Match` there is a blank that can be used: make another option so that we have a box filled with three question marks.
 - [ ] modify `blank()` to support being a box filled with three question marks
 - [ ] add a number of assertions for the functions I have and properly deal with data types that come in (i.e. some functions can take str, int, array, content)
-- [x] Add limit and detractor limit to `Match`
-- [x] Change detractors for `Match` to take str, array, or int
+- [x] Add limit and distractor limit to `Match`
+- [x] Change distractors for `Match` to take str, array, or int
 
 ### Todo for repo
 

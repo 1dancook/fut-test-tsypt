@@ -14,10 +14,10 @@ Some examples of how to use `MultipleChoice`
 
 + #[Multiple solutions but randomly use only one of them (or any limit):
     #MultipleChoice(("A", "B", "C"), ("D", "E", "F"), solutions: 1)
-    Note: multiple detractors can be provided and also limited.
+    Note: multiple distractors can be provided and also limited.
   ]
 
-+ #[`text` items (either solutions or detractors) allow for formatting items. `vertical: true` can also be provided to change the orientation. The default is horizontal spread.
++ #[`text` items (either solutions or distractors) allow for formatting items. `vertical: true` can also be provided to change the orientation. The default is horizontal spread.
 
     ```typst
     #let formatted_text = [There was a *bold* thing.]

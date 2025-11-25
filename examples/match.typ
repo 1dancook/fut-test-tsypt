@@ -8,5 +8,5 @@
     "furniture": "chair",
     "A #blank is a flower": "rose",
   ),
-  detractors: "a single detractor",
+  distractors: "a single distractor",
 )
