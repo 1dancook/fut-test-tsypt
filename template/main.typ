@@ -117,3 +117,13 @@ Match will take a dictionary and produce a left hand list of questions (with an 
   limit: 3,
 )
 
+
+`OptionSelect` is meant to be used with audio that can't be randomized (i.e. the options are presented in audio)
+
+Here is some text #OptionSelect("ABC", "B")
+
+
+What about T/F?
+
+#[this thing #True]
+#[this thing #False]

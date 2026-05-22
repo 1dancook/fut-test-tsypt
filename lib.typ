@@ -432,7 +432,7 @@ To compile with the actual timestamp requires using the CLI:
 #let True = options((hl_solution("True"), "False"), left_pad: 3em)
 #let False = options(("True", hl_solution("False")), left_pad: 3em)
 
-#let OptionSelect(selectable_options, answer) = {
+#let OptionSelect(selectable_options, answer, left_pad: 3em) = {
   // This is meant to be used with audio that can't be randomized (i.e. the options are presented in audio)
   // options should be like "ABC"
   // answer should be like "A"
@@ -450,7 +450,7 @@ To compile with the actual timestamp requires using the CLI:
       list_of_options.push(smallbox)
     }
   }
-  options(list_of_options)
+  options(list_of_options, left_pad: left_pad)
 }
 
 
