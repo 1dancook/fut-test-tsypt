@@ -85,7 +85,10 @@ To compile with the actual timestamp requires using the CLI:
 
   // Assemble the grid
   grid(
-    columns: (col1, col2), align: left + horizon, gutter: 0pt, column-gutter: 0pt,
+    columns: (col1, col2),
+    align: left + horizon,
+    gutter: 0pt,
+    column-gutter: 0pt,
 
     // Column 1: Numbering
     box(
@@ -108,7 +111,7 @@ To compile with the actual timestamp requires using the CLI:
       [
         #title \ #instructions
       ],
-    )
+    ),
   )
 })
 
@@ -833,9 +836,10 @@ To compile with the actual timestamp requires using the CLI:
       box(
         //inset: (top: 2pt),
         grid(
-          columns: 1, row-gutter: 1em,
+          columns: 1,
+          row-gutter: 1em,
           ..display_order,
-          v(0.5em)
+          v(0.5em),
         ),
       )
     },
@@ -914,7 +918,7 @@ To compile with the actual timestamp requires using the CLI:
     align: horizon,
     text(size: 1.5em, weight: "bold", title), box(baseline: 0em, [学績番号: #h(1fr) #student_number_box]),
     text(size: 1.2em, subtitle), box(baseline: 1em, [氏名: #blank(width: 1fr)]),
-    grid.cell(colspan: 2, box(stroke: (bottom: 3pt), height: 1em, width: 1fr))
+    grid.cell(colspan: 2, box(stroke: (bottom: 3pt), height: 1em, width: 1fr)),
   )
 
 
