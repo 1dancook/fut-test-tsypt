@@ -429,6 +429,27 @@ To compile with the actual timestamp requires using the CLI:
 #let True = options((hl_solution("True"), "False"), left_pad: 3em)
 #let False = options(("True", hl_solution("False")), left_pad: 3em)
 
+#let OptionSelect(selectable_options, answer) = {
+  // This is meant to be used with audio that can't be randomized (i.e. the options are presented in audio)
+  // options should be like "ABC"
+  // answer should be like "A"
+  // This presents the test taker with a checkbox per item
+
+  let smallbox = box(stroke: 1pt, height: 1em, width: 1em, baseline: 2pt)
+  let answer_smallbox = box(fill: red, stroke: 1pt + red, height: 1em, width: 1em, baseline: 2pt)
+
+  let list_of_options = ()
+
+  for n in selectable_options {
+    if (n == answer) and answerkey {
+      list_of_options.push(answer_smallbox)
+    } else {
+      list_of_options.push(smallbox)
+    }
+  }
+  options(list_of_options)
+}
+
 
 
 #let Match(pairs, limit: none, distractors: none, distractor_limit: none, style: "A", col_size: (1fr, 1fr)) = {
