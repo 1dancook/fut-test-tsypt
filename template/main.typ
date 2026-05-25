@@ -127,3 +127,7 @@ What about T/F?
 
 #[this thing #True]
 #[this thing #False]
+
+
+
+Hello #ClozeBlank[this] is a clozeblank

@@ -165,7 +165,7 @@ To compile with the actual timestamp requires using the CLI:
 // ------------------------------
 
 #let blank(..args) = {
-  // some of the defaults for blank will be determined by whether an answer should be displayed
+  // Some of the defaults for blank will be determined by whether an answer should be displayed
   let answer_mode = if args.pos().len() > 0 and answerkey { true } else { false }
 
   // whatever is provided in positional args will be converted to content
@@ -187,6 +187,41 @@ To compile with the actual timestamp requires using the CLI:
 
   box(..passed_args, body)
 }
+
+
+#let ClozeBlank(..args) = {
+  // some of the defaults for blank will be determined by whether an answer should be displayed
+
+  // whatever is provided in positional args will be converted to content
+  let body = []
+  if answerkey {
+    body = align(center + bottom, text(fill: red, [#args.pos().at(0)]))
+  }
+
+  let box_width = 8 * 11pt
+
+  let passed_args = (
+    width: args.named().at("width", default: if answerkey { auto } else { box_width }),
+    stroke: args.named().at("stroke", default: (if not answerkey { (bottom: 1pt + dark_color) })),
+    height: args.named().at("height", default: 12pt),
+    baseline: args.named().at("baseline", default: 2pt),
+    radius: args.named().at("radius", default: (left: 3pt)),
+    fill: faint_gray,
+    clip: true,
+  )
+
+  let qnum = box(
+    fill: question_fill_color,
+    inset: 3pt,
+    align(center + horizon, text(fill: white, weight: "bold", size: 0.9em, QuestionNum)),
+  )
+
+  box(
+    ..passed_args,
+    [#qnum#box(inset: 3pt, baseline: -0pt, width: box_width, body)],
+  )
+}
+
 
 
 #let round_numbering(num) = {
