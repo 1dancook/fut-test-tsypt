@@ -29,4 +29,8 @@ preview:
 preview-ak:
 	typst compile --root . --open --input answerkey=true template/main.typ
 
+live-preview:
+	open -a firefox "http://127.0.0.1:8765"
+	tinymist preview --root . --no-open --host 127.0.0.1:8765 template/main.typ
+
 .PHONY: all install uninstall

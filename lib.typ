@@ -200,33 +200,40 @@ To compile with the actual timestamp requires using the CLI:
 
   let box_width = 8 * 11pt
 
+  let _default_height = 12pt
+
   let passed_args = (
     width: args.named().at("width", default: if answerkey { auto } else { box_width }),
     stroke: args.named().at("stroke", default: (if not answerkey { (bottom: 1pt + dark_color) })),
-    height: args.named().at("height", default: 12pt),
-    baseline: args.named().at("baseline", default: 2pt),
-    radius: args.named().at("radius", default: (left: 3pt)),
+    height: args.named().at("height", default: _default_height),
     fill: faint_gray,
-    clip: true,
   )
 
   let qnum = box(
     fill: question_fill_color,
     inset: 3pt,
+    height: args.named().at("height", default: _default_height),
+    stroke: args
+      .named()
+      .at("stroke", default: (if not answerkey { (bottom: stroke(paint: dark_color, thickness: 1pt, cap: "round")) })),
+    radius: args.named().at("radius", default: (left: 3pt)),
     align(center + horizon, text(fill: white, weight: "bold", size: 0.9em, QuestionNum)),
   )
 
-  box(
-    ..passed_args,
-    [#qnum#box(inset: 3pt, baseline: -0pt, width: box_width, body)],
-  )
+  // use an inline grid (wrap in box) and move it vertically
+  box(height: 0pt, move(dy: 0.2em)[#grid(
+    columns: (auto, auto),
+    column-gutter: 0pt,
+    align: bottom,
+    [#qnum], box(..passed_args, inset: 3pt, width: box_width, body),
+  )])
 }
 
 
 
 #let round_numbering(num) = {
   box(
-    baseline: 1.5pt,
+    baseline: 0pt,
     circle(radius: 5pt, fill: dark_color, stroke: 1pt + dark_color, inset: 0pt)[
       #set align(center + horizon)
       #text(size: 8pt, fill: white, num)
@@ -928,12 +935,13 @@ To compile with the actual timestamp requires using the CLI:
 
   show heading.where(level: 1): element => align(center)[#v(0.5em) #element #v(0.5em)]
 
-  show heading.where(level: 3): element => [#box(width: 5pt, height: 1.5em, fill: dark_color)#box(
-      inset: (x: 1em),
-      height: 1.5em,
-      fill: light_gray,
-      align(left + horizon, element),
-    )]
+  show heading.where(level: 3): element => [#box(
+    inset: (x: 1em),
+    height: 1.5em,
+    fill: light_gray,
+    stroke: (left: 5pt + dark_color),
+    align(left + horizon, element),
+  )]
 
   let numbox = box(stroke: 1pt, height: 1.5em, width: 1.5em, baseline: 2pt)
 
